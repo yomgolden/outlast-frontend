@@ -8,8 +8,7 @@ import {
 } from "react-router-dom";
 
 import {
-  getMatchFeed,
-  getMatchStatus
+  simulateMatch
 } from "../api/api";
 
 import {
@@ -46,97 +45,155 @@ export default function Match() {
   useEffect(() => {
 
     if (!match?.matchId) {
+
       navigate("/");
+
       return;
     }
 
-    const poll = setInterval(
+    const startSimulation =
       async () => {
 
         try {
 
-          const feedData =
-            await getMatchFeed(
-              match.matchId
-            );
-
-          const status =
-            await getMatchStatus(
-              match.matchId
-            );
-
-          setFeed(feedData);
-
-          setRound(
-            status.round || 1
-          );
-
-          setAlive(
-            status.alivePlayers
-              ?.length || 0
-          );
-
           /*
-          ============================
-          MATCH ENDED
-          ============================
+          ===========================
+          START REAL SIMULATION
+          ===========================
           */
 
-          if (
-            status.status ===
-            "ENDED"
+          const data =
+            await simulateMatch(
+              match.matchId
+            );
+
+          /*
+          ===========================
+          STREAM FEED EVENTS
+          ===========================
+          */
+
+          let currentFeed =
+            [];
+
+          for (
+            let i = 0;
+            i <
+            data.feed.length;
+            i++
           ) {
 
-            setResults({
-              results: [
-                {
-                  player: "Shadow",
-                  placement: 1,
-                  goldEarned: 300,
-                  xpEarned: 100
-                },
-                {
-                  player: "Nova",
-                  placement: 2,
-                  goldEarned: 200,
-                  xpEarned: 80
-                },
-                {
-                  player: "Viper",
-                  placement: 3,
-                  goldEarned: 100,
-                  xpEarned: 60
-                }
-              ]
-            });
+            const item =
+              data.feed[i];
 
-            clearInterval(poll);
+            currentFeed = [
+              ...currentFeed,
+              item
+            ];
 
-            navigate(
-              "/results"
+            setFeed(
+              currentFeed
+            );
+
+            /*
+            ===========================
+            ROUND TRACKING
+            ===========================
+            */
+
+            if (
+              item.round
+            ) {
+
+              setRound(
+                item.round
+              );
+            }
+
+            /*
+            ===========================
+            ALIVE TRACKING
+            ===========================
+            */
+
+            if (
+              item.message?.includes(
+                "PLAYERS REMAIN"
+              )
+            ) {
+
+              const number =
+                parseInt(
+                  item.message
+                );
+
+              if (
+                !isNaN(
+                  number
+                )
+              ) {
+
+                setAlive(
+                  number
+                );
+              }
+            }
+
+            /*
+            ===========================
+            FEED SPEED
+            ===========================
+            */
+
+            await new Promise(
+              resolve =>
+                setTimeout(
+                  resolve,
+                  2500
+                )
             );
           }
+
+          /*
+          ===========================
+          SHOW RESULTS
+          ===========================
+          */
+
+          setResults({
+            results:
+              data.results
+          });
+
+          setTimeout(
+            () => {
+
+              navigate(
+                "/results"
+              );
+
+            },
+            3000
+          );
 
         } catch (err) {
 
           setError(
-            "Failed to load match"
+            "Simulation failed"
           );
 
-          console.error(err);
+          console.error(
+            err
+          );
         }
+      };
 
-      },
-      2000
-    );
-
-    return () => {
-      clearInterval(poll);
-    };
+    startSimulation();
 
   }, []);
 
   return (
+
     <div className="app-container">
 
       <h1 className="title">
@@ -156,9 +213,11 @@ export default function Match() {
       </div>
 
       {error && (
+
         <div className="card">
           {error}
         </div>
+
       )}
 
       <div>
