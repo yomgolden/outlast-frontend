@@ -8,7 +8,6 @@ import {
 } from "react-router-dom";
 
 import {
-  simulateMatch,
   getMatchFeed,
   getMatchStatus
 } from "../api/api";
@@ -46,104 +45,93 @@ export default function Match() {
 
   useEffect(() => {
 
-    let poll;
+    if (!match?.matchId) {
+      navigate("/");
+      return;
+    }
 
-    const startMatch =
+    const poll = setInterval(
       async () => {
 
         try {
 
-          await simulateMatch(
-            match.matchId
+          const feedData =
+            await getMatchFeed(
+              match.matchId
+            );
+
+          const status =
+            await getMatchStatus(
+              match.matchId
+            );
+
+          setFeed(feedData);
+
+          setRound(
+            status.round || 1
           );
 
-          poll = setInterval(
-            async () => {
+          setAlive(
+            status.alivePlayers
+              ?.length || 0
+          );
 
-              try {
+          /*
+          ============================
+          MATCH ENDED
+          ============================
+          */
 
-                const feedData =
-                  await getMatchFeed(
-                    match.matchId
-                  );
+          if (
+            status.status ===
+            "ENDED"
+          ) {
 
-                const status =
-                  await getMatchStatus(
-                    match.matchId
-                  );
-
-                setFeed(feedData);
-
-                setRound(
-                  status.round || 1
-                );
-
-                setAlive(
-                  status.alivePlayers
-                    ?.length || 0
-                );
-
-                if (
-                  status.status ===
-                  "ENDED"
-                ) {
-
-                  setResults({
-                    results: [
-                      {
-                        player: "Shadow",
-                        placement: 1,
-                        goldEarned: 300,
-                        xpEarned: 100
-                      },
-                      {
-                        player: "Nova",
-                        placement: 2,
-                        goldEarned: 200,
-                        xpEarned: 80
-                      },
-                      {
-                        player: "Viper",
-                        placement: 3,
-                        goldEarned: 100,
-                        xpEarned: 60
-                      }
-                    ]
-                  });
-
-                  clearInterval(poll);
-
-                  navigate("/results");
+            setResults({
+              results: [
+                {
+                  player: "Shadow",
+                  placement: 1,
+                  goldEarned: 300,
+                  xpEarned: 100
+                },
+                {
+                  player: "Nova",
+                  placement: 2,
+                  goldEarned: 200,
+                  xpEarned: 80
+                },
+                {
+                  player: "Viper",
+                  placement: 3,
+                  goldEarned: 100,
+                  xpEarned: 60
                 }
+              ]
+            });
 
-              } catch (err) {
+            clearInterval(poll);
 
-                console.error(err);
-
-                setError(
-                  "Failed to load match updates"
-                );
-              }
-
-            },
-            2000
-          );
+            navigate(
+              "/results"
+            );
+          }
 
         } catch (err) {
 
-          console.error(err);
-
           setError(
-            "Simulation failed"
+            "Failed to load match"
           );
-        }
-      };
 
-    startMatch();
+          console.error(err);
+        }
+
+      },
+      2000
+    );
 
     return () => {
-      if (poll)
-        clearInterval(poll);
+      clearInterval(poll);
     };
 
   }, []);
@@ -156,6 +144,7 @@ export default function Match() {
       </h1>
 
       <div className="card">
+
         <p>
           Round: {round}
         </p>
@@ -163,6 +152,7 @@ export default function Match() {
         <p>
           Alive: {alive}
         </p>
+
       </div>
 
       {error && (
@@ -174,17 +164,18 @@ export default function Match() {
       <div>
 
         {feed.map(
-          (item, index) => (
+          (
+            item,
+            index
+          ) => (
 
             <div
               key={index}
-              className="card"
-              style={{
-                marginTop: 10
-              }}
+              className="feed-item"
             >
               {item.message}
             </div>
+
           )
         )}
 
