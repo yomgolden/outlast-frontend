@@ -8,7 +8,7 @@ import {
 } from "react-router-dom";
 
 import {
-  getMatchStatus
+  getEventStatus
 } from "../api/api";
 
 import {
@@ -26,18 +26,29 @@ export default function Queue() {
   } = useMatch();
 
   const [
-    timer,
-    setTimer
-  ] = useState(120);
+    countdown,
+    setCountdown
+  ] = useState(60);
 
   const [
-    playerCount,
-    setPlayerCount
-  ] = useState(0);
+    players,
+    setPlayers
+  ] = useState([]);
+
+  const [
+    status,
+    setStatus
+  ] = useState("WAITING");
+
+  /*
+  =======================================
+  POLLING
+  =======================================
+  */
 
   useEffect(() => {
 
-    if (!match?.matchId)
+    if (!match?.eventId)
       return;
 
     const poll =
@@ -46,27 +57,42 @@ export default function Queue() {
 
           try {
 
-            const status =
-              await getMatchStatus(
-                match.matchId
+            const data =
+              await getEventStatus(
+                match.eventId
               );
 
-            setPlayerCount(
-              status
-                .alivePlayers
-                ?.length || 0
+            setPlayers(
+              data.players || []
+            );
+
+            setCountdown(
+              data.countdown || 0
+            );
+
+            setStatus(
+              data.status
             );
 
             setMatch({
               ...match,
-              status:
-                status.status
+              ...data
             });
 
+            /*
+            =======================================
+            MATCH START
+            =======================================
+            */
+
             if (
-              status.status ===
+              data.status ===
               "STARTED"
             ) {
+
+              clearInterval(
+                poll
+              );
 
               navigate(
                 "/match"
@@ -75,63 +101,145 @@ export default function Queue() {
 
           } catch (err) {
 
-            console.error(err);
+            console.error(
+              err
+            );
           }
 
         },
         2000
       );
 
-    const countdown =
-      setInterval(() => {
-
-        setTimer(prev => {
-
-          if (prev <= 1)
-            return 0;
-
-          return prev - 1;
-        });
-
-      }, 1000);
-
     return () => {
 
-      clearInterval(poll);
-
       clearInterval(
-        countdown
+        poll
       );
     };
 
   }, []);
 
   return (
-    <div className="app-container center"
+
+    <div
+      className="app-container center"
       style={{
-        flexDirection: "column"
+        flexDirection:
+          "column"
       }}
     >
 
       <h1 className="title">
-        MATCHMAKING
+        {match?.theme ||
+          "SURVIVAL EVENT"}
       </h1>
+
+      {/* EVENT INFO */}
 
       <div className="card">
 
         <h2>
-          {timer}s
+          {countdown}s
         </h2>
 
         <p>
-          Players:
+          Location:
           {" "}
-          {playerCount}/20
+          {
+            match?.location
+          }
         </p>
 
         <p>
-          Waiting for match
-          start...
+          Danger:
+          {" "}
+          {
+            match?.danger
+          }
+        </p>
+
+        <p>
+          Survivors:
+          {" "}
+          {
+            players.length
+          }
+          /
+          {
+            match?.maxPlayers ||
+            20
+          }
+        </p>
+
+        <p>
+          Status:
+          {" "}
+          {status}
+        </p>
+
+      </div>
+
+      {/* SURVIVOR LIST */}
+
+      <div
+        className="card"
+        style={{
+          marginTop: 20,
+          width: "100%"
+        }}
+      >
+
+        <h3>
+          Survivors Entering
+        </h3>
+
+        {
+          players.length === 0 && (
+            <p>
+              Waiting for survivors...
+            </p>
+          )
+        }
+
+        {
+          players.map(
+            (
+              player,
+              index
+            ) => (
+
+              <div
+                key={index}
+                style={{
+                  marginTop: 10
+                }}
+              >
+                @{player.username}
+              </div>
+            )
+          )
+        }
+
+      </div>
+
+      {/* ATMOSPHERE */}
+
+      <div
+        className="card"
+        style={{
+          marginTop: 20
+        }}
+      >
+
+        <p>
+          Survivors are gathering
+          inside the district.
+        </p>
+
+        <p>
+          Match begins when the
+          countdown ends or the
+          arena becomes full.
         </p>
 
       </div>
