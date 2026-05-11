@@ -91,13 +91,15 @@ export const UserProvider = ({
               ?.user;
 
           const telegramUser = {
-            id:
+
+            telegramId:
               telegram?.id ||
               Date.now().toString(),
 
             username:
               telegram?.username ||
-              "Player"
+              `Player_${Math.floor(Math.random() * 9999)}`
+
           };
 
           const auth =
