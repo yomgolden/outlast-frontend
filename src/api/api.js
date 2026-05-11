@@ -10,96 +10,172 @@ api.interceptors.response.use(
   (error) => {
 
     if (!error.response) {
+
       return Promise.reject({
         message: "Network error"
       });
     }
 
-    return Promise.reject(error.response.data);
+    return Promise.reject(
+      error.response.data
+    );
   }
 );
 
-export const authTelegram = async (
-  telegramData
-) => {
-  const res = await api.post(
-    "/auth/telegram",
+/*
+========================================
+AUTH
+========================================
+*/
+
+export const authTelegram =
+  async (
     telegramData
-  );
+  ) => {
 
-  return res.data;
-};
+    const res =
+      await api.post(
+        "/auth/telegram",
+        telegramData
+      );
 
-export const getUser = async (
-  userId
-) => {
-  const res = await api.get(
-    `/user/${userId}`
-  );
+    return res.data;
+  };
 
-  return res.data;
-};
+/*
+========================================
+USER
+========================================
+*/
 
-export const joinMatch = async (
-  userId
-) => {
-  const res = await api.post(
-    "/match/join",
-    { userId }
-  );
+export const getUser =
+  async (
+    userId
+  ) => {
 
-  return res.data;
-};
+    const res =
+      await api.get(
+        `/user/${userId}`
+      );
 
-export const getMatchStatus = async (
-  matchId
-) => {
-  const res = await api.get(
-    `/match/${matchId}/status`
-  );
+    return res.data;
+  };
 
-  return res.data;
-};
+export const equipTools =
+  async (
+    userId,
+    tools
+  ) => {
 
-export const getMatchFeed = async (
-  matchId
-) => {
-  const res = await api.get(
-    `/match/${matchId}/feed`
-  );
+    const res =
+      await api.post(
+        `/user/${userId}/equip`,
+        { tools }
+      );
 
-  return res.data;
-};
+    return res.data;
+  };
 
-export const simulateMatch = async (
-  matchId
-) => {
-  const res = await api.post(
-    `/simulation/${matchId}/simulate`
-  );
+/*
+========================================
+EVENTS
+========================================
+*/
 
-  return res.data;
-};
+export const createEvent =
+  async (
+    userId,
+    username
+  ) => {
 
-export const equipTools = async (
-  userId,
-  tools
-) => {
+    const res =
+      await api.post(
+        "/match/create",
+        {
+          userId,
+          username
+        }
+      );
 
-  const res = await api.post(
-    `/user/${userId}/equip`,
-    { tools }
-  );
+    return res.data;
+  };
 
-  return res.data;
-};
+export const joinEvent =
+  async (
+    eventId,
+    userId,
+    username
+  ) => {
+
+    const res =
+      await api.post(
+        "/match/join",
+        {
+          eventId,
+          userId,
+          username
+        }
+      );
+
+    return res.data;
+  };
+
+export const getEvents =
+  async () => {
+
+    const res =
+      await api.get(
+        "/match/events"
+      );
+
+    return res.data;
+  };
+
+export const getEventStatus =
+  async (
+    eventId
+  ) => {
+
+    const res =
+      await api.get(
+        `/match/${eventId}/status`
+      );
+
+    return res.data;
+  };
+
+/*
+========================================
+SIMULATION
+========================================
+*/
+
+export const simulateMatch =
+  async (
+    eventId
+  ) => {
+
+    const res =
+      await api.post(
+        `/simulation/${eventId}/simulate`
+      );
+
+    return res.data;
+  };
+
+/*
+========================================
+LEADERBOARD
+========================================
+*/
 
 export const getLeaderboard =
   async () => {
 
-    const res = await api.get(
-      "/leaderboard"
-    );
+    const res =
+      await api.get(
+        "/leaderboard"
+      );
 
     return res.data;
   };
