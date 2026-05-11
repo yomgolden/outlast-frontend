@@ -1,7 +1,15 @@
-import { useNavigate } from "react-router-dom";
+import {
+  useEffect,
+  useState
+} from "react";
 
 import {
-  joinMatch
+  useNavigate
+} from "react-router-dom";
+
+import {
+  joinMatch,
+  getLeaderboard
 } from "../api/api";
 
 import {
@@ -12,26 +20,95 @@ import {
   useMatch
 } from "../context/MatchContext";
 
-import LeaderboardPreview from "../components/LeaderboardPreview";
+import Loader from "../components/Loader";
 
 export default function Home() {
 
-  const navigate = useNavigate();
+  const navigate =
+    useNavigate();
 
-  const { user } = useUser();
+  const {
+    user,
+    loading,
+    error
+  } = useUser();
 
-  const { setMatch } = useMatch();
+  const {
+    setMatch
+  } = useMatch();
 
-  const handleJoin = async () => {
+  const [
+    leaderboard,
+    setLeaderboard
+  ] = useState([]);
 
-    const data = await joinMatch(
-      user._id
-    );
+  const [
+    joining,
+    setJoining
+  ] = useState(false);
 
-    setMatch(data);
+  const [
+    joinError,
+    setJoinError
+  ] = useState("");
 
-    navigate("/queue");
-  };
+  useEffect(() => {
+
+    const load =
+      async () => {
+
+        try {
+
+          const data =
+            await getLeaderboard();
+
+          setLeaderboard(
+            data.slice(0, 5)
+          );
+
+        } catch (err) {
+
+          console.error(err);
+        }
+      };
+
+    load();
+
+  }, []);
+
+  const handleJoin =
+    async () => {
+
+      try {
+
+        setJoining(true);
+
+        setJoinError("");
+
+        const data =
+          await joinMatch(
+            user._id
+          );
+
+        setMatch(data);
+
+        navigate("/queue");
+
+      } catch (err) {
+
+        setJoinError(
+          err.message ||
+          "Failed to join match"
+        );
+
+      } finally {
+
+        setJoining(false);
+      }
+    };
+
+  if (loading)
+    return <Loader />;
 
   return (
     <div className="app-container">
@@ -40,31 +117,98 @@ export default function Home() {
         OUTLAST
       </h1>
 
+      {error && (
+        <div className="card">
+          {error}
+        </div>
+      )}
+
       <div className="card">
+
+        <h3>
+          @{user?.username}
+        </h3>
+
         <p>
           Gold:
           <span className="gold">
             {" "}
-            {user?.gold || 0}
+            {user?.gold}
           </span>
         </p>
 
         <p>
-          XP: {user?.xp || 0}
+          Gems:
+          {" "}
+          {user?.gems}
         </p>
+
+        <p>
+          Level:
+          {" "}
+          {user?.level}
+        </p>
+
+        <p>
+          XP:
+          {" "}
+          {user?.xp}
+        </p>
+
       </div>
 
       <button
         className="primary-btn"
+        disabled={joining}
         onClick={handleJoin}
       >
-        JOIN MATCH
+        {
+          joining
+            ? "JOINING..."
+            : "JOIN MATCH"
+        }
       </button>
 
-      <div style={{
-        marginTop: 20
-      }}>
-        <LeaderboardPreview />
+      {joinError && (
+        <div
+          className="card"
+          style={{
+            marginTop: 10
+          }}
+        >
+          {joinError}
+        </div>
+      )}
+
+      <div
+        className="card"
+        style={{
+          marginTop: 20
+        }}
+      >
+
+        <h3>
+          Top Survivors
+        </h3>
+
+        {leaderboard.map(
+          (
+            player,
+            index
+          ) => (
+            <div
+              key={index}
+              style={{
+                marginTop: 10
+              }}
+            >
+              #{index + 1}
+              {" "}
+              {player.userId}
+            </div>
+          )
+        )}
+
       </div>
 
     </div>
