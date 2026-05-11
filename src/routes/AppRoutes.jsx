@@ -8,6 +8,9 @@ import Home from "../pages/Home";
 import Queue from "../pages/Queue";
 import Match from "../pages/Match";
 import Results from "../pages/Results";
+import Leaderboard from "../pages/Leaderboard";
+import Profile from "../pages/Profile";
+import Shop from "../pages/Shop";
 
 export default function AppRoutes() {
 
@@ -34,6 +37,21 @@ export default function AppRoutes() {
         <Route
           path="/results"
           element={<Results />}
+        />
+
+        <Route
+          path="/leaderboard"
+          element={<Leaderboard />}
+        />
+
+        <Route
+          path="/profile"
+          element={<Profile />}
+        />
+
+        <Route
+          path="/shop"
+          element={<Shop />}
         />
 
       </Routes>
