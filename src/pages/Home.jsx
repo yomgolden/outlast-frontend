@@ -8,7 +8,9 @@ import {
 } from "react-router-dom";
 
 import {
-  joinMatch,
+  createEvent,
+  joinEvent,
+  getEvents,
   getLeaderboard
 } from "../api/api";
 
@@ -43,14 +45,25 @@ export default function Home() {
   ] = useState([]);
 
   const [
-    joining,
-    setJoining
+    events,
+    setEvents
+  ] = useState([]);
+
+  const [
+    creating,
+    setCreating
   ] = useState(false);
 
   const [
     joinError,
     setJoinError
   ] = useState("");
+
+  /*
+  ========================================
+  LOAD DATA
+  ========================================
+  */
 
   useEffect(() => {
 
@@ -59,11 +72,18 @@ export default function Home() {
 
         try {
 
-          const data =
+          const board =
             await getLeaderboard();
 
           setLeaderboard(
-            data.slice(0, 5)
+            board.slice(0, 5)
+          );
+
+          const liveEvents =
+            await getEvents();
+
+          setEvents(
+            liveEvents
           );
 
         } catch (err) {
@@ -74,20 +94,38 @@ export default function Home() {
 
     load();
 
+    const poll =
+      setInterval(
+        load,
+        3000
+      );
+
+    return () =>
+      clearInterval(
+        poll
+      );
+
   }, []);
 
-  const handleJoin =
+  /*
+  ========================================
+  CREATE EVENT
+  ========================================
+  */
+
+  const handleCreate =
     async () => {
 
       try {
 
-        setJoining(true);
+        setCreating(true);
 
         setJoinError("");
 
         const data =
-          await joinMatch(
-            user._id
+          await createEvent(
+            user._id,
+            user.username
           );
 
         setMatch(data);
@@ -98,12 +136,47 @@ export default function Home() {
 
         setJoinError(
           err.message ||
-          "Failed to join match"
+          "Failed to create event"
         );
 
       } finally {
 
-        setJoining(false);
+        setCreating(false);
+      }
+    };
+
+  /*
+  ========================================
+  JOIN EVENT
+  ========================================
+  */
+
+  const handleJoin =
+    async (
+      eventId
+    ) => {
+
+      try {
+
+        setJoinError("");
+
+        const data =
+          await joinEvent(
+            eventId,
+            user._id,
+            user.username
+          );
+
+        setMatch(data);
+
+        navigate("/queue");
+
+      } catch (err) {
+
+        setJoinError(
+          err.message ||
+          "Failed to join event"
+        );
       }
     };
 
@@ -111,6 +184,7 @@ export default function Home() {
     return <Loader />;
 
   return (
+
     <div className="app-container">
 
       <h1 className="title">
@@ -118,10 +192,14 @@ export default function Home() {
       </h1>
 
       {error && (
+
         <div className="card">
           {error}
         </div>
+
       )}
+
+      {/* USER CARD */}
 
       <div className="card">
 
@@ -157,19 +235,26 @@ export default function Home() {
 
       </div>
 
+      {/* CREATE EVENT */}
+
       <button
         className="primary-btn"
-        disabled={joining}
-        onClick={handleJoin}
+        disabled={creating}
+        onClick={handleCreate}
       >
+
         {
-          joining
-            ? "JOINING..."
-            : "JOIN MATCH"
+          creating
+            ? "CREATING..."
+            : "START SURVIVAL EVENT"
         }
+
       </button>
 
+      {/* ERRORS */}
+
       {joinError && (
+
         <div
           className="card"
           style={{
@@ -178,7 +263,121 @@ export default function Home() {
         >
           {joinError}
         </div>
+
       )}
+
+      {/* ACTIVE EVENTS */}
+
+      <div
+        className="card"
+        style={{
+          marginTop: 20
+        }}
+      >
+
+        <h3>
+          Active Survival Events
+        </h3>
+
+        {
+          events.length === 0 && (
+            <p>
+              No active events
+            </p>
+          )
+        }
+
+        {
+          events.map(
+            (
+              event,
+              index
+            ) => (
+
+              <div
+                key={index}
+                style={{
+                  marginTop: 20,
+                  paddingBottom: 20,
+                  borderBottom:
+                    "1px solid #333"
+                }}
+              >
+
+                <h4>
+                  {event.theme}
+                </h4>
+
+                <p>
+                  Host:
+                  {" "}
+                  @{event.host}
+                </p>
+
+                <p>
+                  Location:
+                  {" "}
+                  {event.location}
+                </p>
+
+                <p>
+                  Danger:
+                  {" "}
+                  {event.danger}
+                </p>
+
+                <p>
+                  Players:
+                  {" "}
+                  {
+                    event.players
+                      ?.length
+                  }
+                  /
+                  {
+                    event.maxPlayers
+                  }
+                </p>
+
+                <p>
+                  Starts In:
+                  {" "}
+                  {
+                    event.countdown
+                  }
+                  s
+                </p>
+
+                <button
+                  className="primary-btn"
+                  onClick={() =>
+                    handleJoin(
+                      event.eventId
+                    )
+                  }
+                  disabled={
+                    event.status !==
+                    "WAITING"
+                  }
+                >
+
+                  {
+                    event.status ===
+                    "WAITING"
+                      ? "JOIN EVENT"
+                      : "STARTED"
+                  }
+
+                </button>
+
+              </div>
+            )
+          )
+        }
+
+      </div>
+
+      {/* LEADERBOARD */}
 
       <div
         className="card"
@@ -191,23 +390,26 @@ export default function Home() {
           Top Survivors
         </h3>
 
-        {leaderboard.map(
-          (
-            player,
-            index
-          ) => (
-            <div
-              key={index}
-              style={{
-                marginTop: 10
-              }}
-            >
-              #{index + 1}
-              {" "}
-              {player.userId}
-            </div>
+        {
+          leaderboard.map(
+            (
+              player,
+              index
+            ) => (
+
+              <div
+                key={index}
+                style={{
+                  marginTop: 10
+                }}
+              >
+                #{index + 1}
+                {" "}
+                {player.userId}
+              </div>
+            )
           )
-        )}
+        }
 
       </div>
 
