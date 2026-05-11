@@ -1,19 +1,48 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL
+  baseURL: import.meta.env.VITE_API_URL,
+  timeout: 15000
 });
 
-export const authTelegram = async (data) => {
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+
+    if (!error.response) {
+      return Promise.reject({
+        message: "Network error"
+      });
+    }
+
+    return Promise.reject(error.response.data);
+  }
+);
+
+export const authTelegram = async (
+  telegramData
+) => {
   const res = await api.post(
     "/auth/telegram",
-    data
+    telegramData
   );
 
   return res.data;
 };
 
-export const joinMatch = async (userId) => {
+export const getUser = async (
+  userId
+) => {
+  const res = await api.get(
+    `/user/${userId}`
+  );
+
+  return res.data;
+};
+
+export const joinMatch = async (
+  userId
+) => {
   const res = await api.post(
     "/match/join",
     { userId }
@@ -22,7 +51,9 @@ export const joinMatch = async (userId) => {
   return res.data;
 };
 
-export const getMatchStatus = async (matchId) => {
+export const getMatchStatus = async (
+  matchId
+) => {
   const res = await api.get(
     `/match/${matchId}/status`
   );
@@ -30,7 +61,9 @@ export const getMatchStatus = async (matchId) => {
   return res.data;
 };
 
-export const getMatchFeed = async (matchId) => {
+export const getMatchFeed = async (
+  matchId
+) => {
   const res = await api.get(
     `/match/${matchId}/feed`
   );
@@ -38,12 +71,37 @@ export const getMatchFeed = async (matchId) => {
   return res.data;
 };
 
-export const simulateMatch = async (matchId) => {
+export const simulateMatch = async (
+  matchId
+) => {
   const res = await api.post(
     `/simulation/${matchId}/simulate`
   );
 
   return res.data;
 };
+
+export const equipTools = async (
+  userId,
+  tools
+) => {
+
+  const res = await api.post(
+    `/user/${userId}/equip`,
+    { tools }
+  );
+
+  return res.data;
+};
+
+export const getLeaderboard =
+  async () => {
+
+    const res = await api.get(
+      "/leaderboard"
+    );
+
+    return res.data;
+  };
 
 export default api;
