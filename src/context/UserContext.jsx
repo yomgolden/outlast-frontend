@@ -90,16 +90,21 @@ export const UserProvider = ({
               ?.initDataUnsafe
               ?.user;
 
-          const telegramUser = {
+          if (!telegram?.id) {
 
+            throw new Error(
+              "Telegram authentication failed"
+            );
+          }
+
+          const telegramUser = {
             telegramId:
-              telegram?.id ||
-              Date.now().toString(),
+              telegram.id,
 
             username:
-              telegram?.username ||
-              `Player_${Math.floor(Math.random() * 9999)}`
-
+              telegram.username ||
+              telegram.first_name ||
+              "Unknown"
           };
 
           const auth =
