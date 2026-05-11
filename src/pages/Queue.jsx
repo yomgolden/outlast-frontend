@@ -8,41 +8,101 @@ import {
 } from "react-router-dom";
 
 import {
+  getMatchStatus
+} from "../api/api";
+
+import {
   useMatch
 } from "../context/MatchContext";
 
 export default function Queue() {
 
-  const navigate = useNavigate();
+  const navigate =
+    useNavigate();
 
-  const { match } = useMatch();
+  const {
+    match,
+    setMatch
+  } = useMatch();
 
-  const [timer, setTimer] =
-    useState(120);
+  const [
+    timer,
+    setTimer
+  ] = useState(120);
+
+  const [
+    playerCount,
+    setPlayerCount
+  ] = useState(0);
 
   useEffect(() => {
 
-    const interval =
+    if (!match?.matchId)
+      return;
+
+    const poll =
+      setInterval(
+        async () => {
+
+          try {
+
+            const status =
+              await getMatchStatus(
+                match.matchId
+              );
+
+            setPlayerCount(
+              status
+                .alivePlayers
+                ?.length || 0
+            );
+
+            setMatch({
+              ...match,
+              status:
+                status.status
+            });
+
+            if (
+              status.status ===
+              "STARTED"
+            ) {
+
+              navigate(
+                "/match"
+              );
+            }
+
+          } catch (err) {
+
+            console.error(err);
+          }
+
+        },
+        2000
+      );
+
+    const countdown =
       setInterval(() => {
 
         setTimer(prev => {
 
-          if (prev <= 1) {
-
-            clearInterval(interval);
-
-            navigate("/match");
-
+          if (prev <= 1)
             return 0;
-          }
 
           return prev - 1;
         });
 
       }, 1000);
 
-    return () =>
-      clearInterval(interval);
+    return () => {
+
+      clearInterval(poll);
+
+      clearInterval(
+        countdown
+      );
+    };
 
   }, []);
 
@@ -58,16 +118,22 @@ export default function Queue() {
       </h1>
 
       <div className="card">
-        <h2>{timer}s</h2>
+
+        <h2>
+          {timer}s
+        </h2>
 
         <p>
-          Waiting for players...
+          Players:
+          {" "}
+          {playerCount}/20
         </p>
 
         <p>
-          Match ID:
-          {match?.matchId}
+          Waiting for match
+          start...
         </p>
+
       </div>
 
     </div>
