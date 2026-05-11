@@ -42,9 +42,20 @@ export default function Match() {
     setError
   ] = useState("");
 
+  const [
+    starting,
+    setStarting
+  ] = useState(true);
+
   useEffect(() => {
 
-    if (!match?.matchId) {
+    /*
+    ===================================
+    NO EVENT
+    ===================================
+    */
+
+    if (!match?.eventId) {
 
       navigate("/");
 
@@ -57,20 +68,22 @@ export default function Match() {
         try {
 
           /*
-          ===========================
-          START REAL SIMULATION
-          ===========================
+          ===================================
+          START EVENT SIMULATION
+          ===================================
           */
 
           const data =
             await simulateMatch(
-              match.matchId
+              match.eventId
             );
 
+          setStarting(false);
+
           /*
-          ===========================
-          STREAM FEED EVENTS
-          ===========================
+          ===================================
+          STREAM FEED
+          ===================================
           */
 
           let currentFeed =
@@ -96,9 +109,9 @@ export default function Match() {
             );
 
             /*
-            ===========================
+            ===================================
             ROUND TRACKING
-            ===========================
+            ===================================
             */
 
             if (
@@ -111,9 +124,9 @@ export default function Match() {
             }
 
             /*
-            ===========================
+            ===================================
             ALIVE TRACKING
-            ===========================
+            ===================================
             */
 
             if (
@@ -140,9 +153,9 @@ export default function Match() {
             }
 
             /*
-            ===========================
+            ===================================
             FEED SPEED
-            ===========================
+            ===================================
             */
 
             await new Promise(
@@ -155,9 +168,9 @@ export default function Match() {
           }
 
           /*
-          ===========================
-          SHOW RESULTS
-          ===========================
+          ===================================
+          RESULTS
+          ===================================
           */
 
           setResults({
@@ -173,17 +186,18 @@ export default function Match() {
               );
 
             },
-            3000
+            4000
           );
 
         } catch (err) {
 
-          setError(
-            "Simulation failed"
-          );
-
           console.error(
             err
+          );
+
+          setError(
+            err.message ||
+            "Simulation failed"
           );
         }
       };
@@ -197,20 +211,60 @@ export default function Match() {
     <div className="app-container">
 
       <h1 className="title">
-        LIVE MATCH
+        {match?.theme ||
+          "OUTLAST"}
       </h1>
 
       <div className="card">
 
         <p>
-          Round: {round}
+          Location:
+          {" "}
+          {
+            match?.location ||
+            "Unknown"
+          }
         </p>
 
         <p>
-          Alive: {alive}
+          Danger:
+          {" "}
+          {
+            match?.danger ||
+            "HIGH"
+          }
+        </p>
+
+        <p>
+          Round:
+          {" "}
+          {round}
+        </p>
+
+        <p>
+          Survivors:
+          {" "}
+          {alive}
         </p>
 
       </div>
+
+      {starting && (
+
+        <div className="card">
+
+          <h3>
+            Arena Opening...
+          </h3>
+
+          <p>
+            Survivors are entering
+            the district.
+          </p>
+
+        </div>
+
+      )}
 
       {error && (
 
