@@ -1,44 +1,92 @@
 import {
+  useEffect
+} from "react";
+
+import {
   useNavigate
 } from "react-router-dom";
 
+import {
+  useMatch
+} from "../context/MatchContext";
+
+import {
+  useUser
+} from "../context/UserContext";
+
 export default function Results() {
 
-  const navigate = useNavigate();
+  const navigate =
+    useNavigate();
 
-  const result = {
-    placement: 1,
-    gold: 250,
-    xp: 100
-  };
+  const {
+    results
+  } = useMatch();
+
+  const {
+    user,
+    loadUser
+  } = useUser();
+
+  useEffect(() => {
+
+    if (user?._id) {
+
+      loadUser(user._id);
+    }
+
+  }, []);
 
   return (
     <div className="app-container">
 
       <h1 className="title">
-        MATCH RESULTS
+        RESULTS
       </h1>
 
-      <div className="card">
+      {results?.results?.map(
+        (
+          player,
+          index
+        ) => (
 
-        <h2>
-          Placement:
-          #{result.placement}
-        </h2>
+          <div
+            className="card"
+            key={index}
+          >
 
-        <p className="gold">
-          +{result.gold} Gold
-        </p>
+            <h3>
+              #
+              {player.placement}
+              {" "}
+              {player.player}
+            </h3>
 
-        <p>
-          +{result.xp} XP
-        </p>
+            <p>
+              Gold:
+              {" "}
+              <span className="gold">
+                +
+                {player.goldEarned}
+              </span>
+            </p>
 
-      </div>
+            <p>
+              XP:
+              {" "}
+              +
+              {player.xpEarned}
+            </p>
+
+          </div>
+        )
+      )}
 
       <button
         className="primary-btn"
-        onClick={() => navigate("/")}
+        onClick={() =>
+          navigate("/")
+        }
       >
         PLAY AGAIN
       </button>
