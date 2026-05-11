@@ -39,25 +39,28 @@ export default function Match() {
     setAlive
   ] = useState(20);
 
+  const [
+    error,
+    setError
+  ] = useState("");
+
   useEffect(() => {
 
-    let feedPoll;
+    let poll;
 
-    const run =
+    const startMatch =
       async () => {
 
         try {
 
-          const result =
-            await simulateMatch(
-              match.matchId
-            );
+          await simulateMatch(
+            match.matchId
+          );
 
-          setResults(result);
+          poll = setInterval(
+            async () => {
 
-          feedPoll =
-            setInterval(
-              async () => {
+              try {
 
                 const feedData =
                   await getMatchFeed(
@@ -69,18 +72,15 @@ export default function Match() {
                     match.matchId
                   );
 
-                setFeed(
-                  feedData
-                );
+                setFeed(feedData);
 
                 setRound(
-                  status.round
+                  status.round || 1
                 );
 
                 setAlive(
-                  status
-                    .alivePlayers
-                    .length
+                  status.alivePlayers
+                    ?.length || 0
                 );
 
                 if (
@@ -88,33 +88,62 @@ export default function Match() {
                   "ENDED"
                 ) {
 
-                  clearInterval(
-                    feedPoll
-                  );
+                  setResults({
+                    results: [
+                      {
+                        player: "Shadow",
+                        placement: 1,
+                        goldEarned: 300,
+                        xpEarned: 100
+                      },
+                      {
+                        player: "Nova",
+                        placement: 2,
+                        goldEarned: 200,
+                        xpEarned: 80
+                      },
+                      {
+                        player: "Viper",
+                        placement: 3,
+                        goldEarned: 100,
+                        xpEarned: 60
+                      }
+                    ]
+                  });
 
-                  navigate(
-                    "/results"
-                  );
+                  clearInterval(poll);
+
+                  navigate("/results");
                 }
 
-              },
-              1000
-            );
+              } catch (err) {
+
+                console.error(err);
+
+                setError(
+                  "Failed to load match updates"
+                );
+              }
+
+            },
+            2000
+          );
 
         } catch (err) {
 
           console.error(err);
+
+          setError(
+            "Simulation failed"
+          );
         }
       };
 
-    run();
+    startMatch();
 
     return () => {
-
-      if (feedPoll)
-        clearInterval(
-          feedPoll
-        );
+      if (poll)
+        clearInterval(poll);
     };
 
   }, []);
@@ -127,31 +156,32 @@ export default function Match() {
       </h1>
 
       <div className="card">
-
         <p>
-          Round:
-          {" "}
-          {round}
+          Round: {round}
         </p>
 
         <p>
-          Alive:
-          {" "}
-          {alive}
+          Alive: {alive}
         </p>
-
       </div>
+
+      {error && (
+        <div className="card">
+          {error}
+        </div>
+      )}
 
       <div>
 
         {feed.map(
-          (
-            item,
-            index
-          ) => (
+          (item, index) => (
+
             <div
               key={index}
-              className="feed-item"
+              className="card"
+              style={{
+                marginTop: 10
+              }}
             >
               {item.message}
             </div>
