@@ -328,9 +328,33 @@ export default function Match() {
 
             date:
               new Date()
-                .toLocaleString()
+                .toLocaleString(),
+
+            /*
+            ===================================
+            SAVE FULL FEED
+            ===================================
+            */
+
+            feed:
+              data.feed || [],
+
+            /*
+            ===================================
+            SAVE RESULTS
+            ===================================
+            */
+
+            results:
+              data.finalResults || []
 
           });
+
+          /*
+          ===================================
+          LIMIT HISTORY
+          ===================================
+          */
 
           localStorage.setItem(
             "outlast_history",
