@@ -1,4 +1,7 @@
-import { Routes, Route } from "react-router-dom";
+import {
+  Routes,
+  Route
+} from "react-router-dom";
 
 import Home from "../pages/Home";
 import Events from "../pages/Events";
@@ -8,6 +11,7 @@ import Results from "../pages/Results";
 import Leaderboard from "../pages/Leaderboard";
 import Profile from "../pages/Profile";
 import History from "../pages/History";
+import Replay from "../pages/Replay";
 
 export default function AppRoutes() {
 
@@ -48,6 +52,11 @@ export default function AppRoutes() {
       <Route
         path="/history"
         element={<History />}
+      />
+
+      <Route
+        path="/history/:id"
+        element={<Replay />}
       />
 
       <Route
