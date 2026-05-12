@@ -36,6 +36,7 @@ export default function Home() {
   } = useUser();
 
   const {
+    match,
     setMatch
   } = useMatch();
 
@@ -58,6 +59,28 @@ export default function Home() {
     joinError,
     setJoinError
   ] = useState("");
+
+  /*
+  =====================================
+  RETURN TO ACTIVE MATCH
+  =====================================
+  */
+
+  useEffect(() => {
+
+    if (
+      match?.eventId
+    ) {
+
+      navigate(
+        "/match",
+        {
+          replace: true
+        }
+      );
+    }
+
+  }, []);
 
   /*
   =====================================
@@ -139,7 +162,10 @@ export default function Home() {
         );
 
         navigate(
-          "/queue"
+          "/queue",
+          {
+            replace: true
+          }
         );
 
       } catch (err) {
@@ -186,7 +212,10 @@ export default function Home() {
         );
 
         navigate(
-          "/queue"
+          "/queue",
+          {
+            replace: true
+          }
         );
 
       } catch (err) {
@@ -209,17 +238,44 @@ export default function Home() {
 
   return (
 
-    <div className="app-container">
+    <div className="page">
 
-      <h1 className="title">
-        OUTLAST
-      </h1>
+      {/* HEADER */}
+
+      <div
+        style={{
+          marginBottom: 24
+        }}
+      >
+
+        <div
+          className="game-title"
+        >
+
+          OUTLAST
+
+        </div>
+
+        <div
+          style={{
+            color:
+              "var(--text3)",
+            marginTop: 6,
+            fontSize: 13
+          }}
+        >
+
+          Nigerian survival simulator
+
+        </div>
+
+      </div>
 
       {/* ERROR */}
 
       {error && (
 
-        <div className="card">
+        <div className="error-card">
 
           {error}
 
@@ -231,34 +287,82 @@ export default function Home() {
 
       <div className="card">
 
-        <h3>
-          @{user?.username}
-        </h3>
+        <div
+          style={{
+            display: "flex",
+            justifyContent:
+              "space-between",
+            alignItems:
+              "center",
+            marginBottom: 14
+          }}
+        >
+
+          <div>
+
+            <h3>
+
+              @{user?.username}
+
+            </h3>
+
+            <div
+              style={{
+                color:
+                  "var(--text3)",
+                fontSize: 12,
+                marginTop: 4
+              }}
+            >
+
+              Survivor Profile
+
+            </div>
+
+          </div>
+
+          <span className="badge badge-purple">
+
+            LVL {user?.level}
+
+          </span>
+
+        </div>
 
         <p>
+
           Gold:
           {" "}
-          <span className="gold">
+
+          <span
+            style={{
+              color:
+                "var(--gold)"
+            }}
+          >
+
             {user?.gold}
+
           </span>
+
         </p>
 
         <p>
+
           Gems:
           {" "}
+
           {user?.gems}
+
         </p>
 
         <p>
-          Level:
-          {" "}
-          {user?.level}
-        </p>
 
-        <p>
           XP:
           {" "}
+
           {user?.xp}
+
         </p>
 
       </div>
@@ -266,7 +370,7 @@ export default function Home() {
       {/* CREATE */}
 
       <button
-        className="primary-btn"
+        className="btn-primary"
         disabled={creating}
         onClick={handleCreate}
       >
@@ -274,7 +378,7 @@ export default function Home() {
         {
           creating
             ? "CREATING..."
-            : "START SURVIVAL EVENT"
+            : "⚡ START SURVIVAL EVENT"
         }
 
       </button>
@@ -284,9 +388,9 @@ export default function Home() {
       {joinError && (
 
         <div
-          className="card"
+          className="error-card"
           style={{
-            marginTop: 10
+            marginTop: 12
           }}
         >
 
@@ -305,15 +409,28 @@ export default function Home() {
         }}
       >
 
-        <h3>
+        <h3
+          style={{
+            marginBottom: 16
+          }}
+        >
+
           Active Survival Events
+
         </h3>
 
         {
           events.length === 0 && (
 
-            <p>
+            <p
+              style={{
+                color:
+                  "var(--text3)"
+              }}
+            >
+
               No active events
+
             </p>
           )
         }
@@ -331,48 +448,75 @@ export default function Home() {
                   marginTop: 20,
                   paddingBottom: 20,
                   borderBottom:
-                    "1px solid #333"
+                    "1px solid var(--border)"
                 }}
               >
 
-                <h4>
-                  {event.theme}
-                </h4>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent:
+                      "space-between",
+                    alignItems:
+                      "center"
+                  }}
+                >
+
+                  <h4>
+
+                    {event.theme}
+
+                  </h4>
+
+                  <span className="badge badge-red">
+
+                    {event.danger}
+
+                  </span>
+
+                </div>
+
+                <p
+                  style={{
+                    marginTop: 10
+                  }}
+                >
+
+                  📍 {event.location}
+
+                </p>
 
                 <p>
+
                   Host:
                   {" "}
                   @{event.host}
+
                 </p>
 
                 <p>
-                  Location:
-                  {" "}
-                  {event.location}
-                </p>
 
-                <p>
-                  Danger:
-                  {" "}
-                  {event.danger}
-                </p>
-
-                <p>
-                  Players:
+                  Survivors:
                   {" "}
                   {event.playerCount}
                   /
                   {event.maxPlayers}
+
                 </p>
 
                 <p>
+
                   Starts In:
                   {" "}
                   {event.countdown}s
+
                 </p>
 
                 <button
-                  className="primary-btn"
+                  className="btn-primary"
+                  style={{
+                    marginTop: 14
+                  }}
                   onClick={() =>
                     handleJoin(
                       event.eventId
@@ -411,8 +555,14 @@ export default function Home() {
         }}
       >
 
-        <h3>
+        <h3
+          style={{
+            marginBottom: 14
+          }}
+        >
+
           Top Survivors
+
         </h3>
 
         {
@@ -425,14 +575,31 @@ export default function Home() {
               <div
                 key={index}
                 style={{
-                  marginTop: 10
+                  marginTop: 12,
+                  display: "flex",
+                  justifyContent:
+                    "space-between"
                 }}
               >
 
-                #
-                {index + 1}
-                {" "}
-                @{player.username}
+                <span>
+
+                  #{index + 1}
+                  {" "}
+                  @{player.username}
+
+                </span>
+
+                <span
+                  style={{
+                    color:
+                      "var(--gold)"
+                  }}
+                >
+
+                  {player.wins || 0}W
+
+                </span>
 
               </div>
             )
