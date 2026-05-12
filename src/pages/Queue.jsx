@@ -65,7 +65,7 @@ export default function Queue() {
 
   /*
   =====================================
-  ROTATING ATMOSPHERE
+  ATMOSPHERE ROTATION
   =====================================
   */
 
@@ -93,7 +93,7 @@ export default function Queue() {
 
   /*
   =====================================
-  POLLING
+  POLL EVENT STATUS
   =====================================
   */
 
@@ -137,8 +137,8 @@ export default function Queue() {
             */
 
             if (
-              data.status ===
-              "STARTED"
+              data.status === "STARTED" ||
+              data.status === "ENDED"
             ) {
 
               clearInterval(
@@ -329,7 +329,7 @@ export default function Queue() {
 
       </div>
 
-      {/* STARTING */}
+      {/* MATCH STARTING */}
 
       {starting && (
 
@@ -486,7 +486,7 @@ export default function Queue() {
 
                 </div>
 
-                {/* INFO */}
+                {/* PLAYER INFO */}
 
                 <div
                   style={{
@@ -523,7 +523,7 @@ export default function Queue() {
 
                 </div>
 
-                {/* STATUS */}
+                {/* READY */}
 
                 <span className="badge badge-green">
 
