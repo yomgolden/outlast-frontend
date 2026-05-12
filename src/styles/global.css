@@ -1,10 +1,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap');
 
 :root {
+
   --bg: #050810;
   --bg2: #080d1a;
+
   --surface: #0d1424;
   --surface2: #111c30;
+
   --border: #1a2540;
   --border2: #243050;
 
@@ -23,23 +26,45 @@
 }
 
 * {
+
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
+html,
 body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'DM Sans', sans-serif;
+
+  min-height: 100%;
   overflow-x: hidden;
 }
 
+body {
+
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+}
+
+/*
+===================================
+ROOT
+===================================
+*/
+
 #root {
+
   min-height: 100vh;
 }
 
+/*
+===================================
+APP SHELL
+===================================
+*/
+
 .shell {
+
   max-width: 480px;
   margin: 0 auto;
   min-height: 100vh;
@@ -47,66 +72,379 @@ body {
   background: var(--bg);
 }
 
+/*
+===================================
+ATMOSPHERIC BACKGROUND
+===================================
+*/
+
+.shell::before {
+
+  content: "";
+
+  position: fixed;
+
+  top: 0;
+  left: 50%;
+
+  transform: translateX(-50%);
+
+  width: 480px;
+  height: 100vh;
+
+  pointer-events: none;
+
+  background:
+    radial-gradient(circle at top,
+      rgba(239,68,68,0.08),
+      transparent 40%),
+
+    radial-gradient(circle at bottom,
+      rgba(168,85,247,0.06),
+      transparent 40%);
+
+  z-index: 0;
+}
+
+/*
+===================================
+PAGE
+===================================
+*/
+
 .page {
+
+  position: relative;
+  z-index: 1;
+
   padding: 20px 16px 90px;
 }
 
-.card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 16px;
-  margin-bottom: 12px;
+/*
+===================================
+TYPOGRAPHY
+===================================
+*/
+
+.title {
+
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 36px;
+  letter-spacing: 4px;
 }
 
 .game-title {
+
   font-family: 'Bebas Neue', sans-serif;
   font-size: 42px;
   letter-spacing: 4px;
 }
 
-.btn-primary {
-  width: 100%;
+/*
+===================================
+CARDS
+===================================
+*/
+
+.card {
+
+  background: rgba(13,20,36,0.92);
+
+  border: 1px solid var(--border);
+
+  border-radius: 16px;
+
   padding: 16px;
+
+  margin-bottom: 14px;
+
+  backdrop-filter: blur(10px);
+}
+
+/*
+===================================
+BUTTONS
+===================================
+*/
+
+.btn-primary {
+
+  width: 100%;
+
+  padding: 16px;
+
   border: none;
+
   border-radius: 14px;
+
   background: var(--red);
+
   color: white;
+
   font-weight: 700;
+
+  letter-spacing: 1px;
+
+  transition: 0.2s ease;
+}
+
+.btn-primary:active {
+
+  transform: scale(0.98);
 }
 
 .btn-secondary {
+
   width: 100%;
+
   padding: 14px;
+
   border-radius: 14px;
+
   border: 1px solid var(--border2);
+
   background: transparent;
+
   color: var(--text);
+
+  font-weight: 600;
+
+  transition: 0.2s ease;
 }
 
+.btn-secondary:active {
+
+  background: rgba(255,255,255,0.04);
+}
+
+/*
+===================================
+BOTTOM NAV
+===================================
+*/
+
 .bottom-nav {
+
   position: fixed;
+
   bottom: 0;
   left: 50%;
+
   transform: translateX(-50%);
+
   max-width: 480px;
   width: 100%;
-  height: 64px;
-  background: #08101d;
+
+  height: var(--nav-h);
+
+  background: rgba(8,13,26,0.96);
+
   border-top: 1px solid var(--border);
+
   display: flex;
+
   justify-content: space-around;
+
   align-items: center;
+
+  backdrop-filter: blur(20px);
+
+  z-index: 100;
 }
 
 .nav-item {
+
   display: flex;
+
   flex-direction: column;
+
   align-items: center;
+
+  justify-content: center;
+
   font-size: 11px;
+
+  gap: 4px;
+
   color: var(--text3);
+
+  transition: 0.2s ease;
 }
 
 .nav-item.active {
+
   color: var(--red);
+}
+
+/*
+===================================
+BADGES
+===================================
+*/
+
+.badge {
+
+  display: inline-flex;
+
+  align-items: center;
+
+  padding: 6px 10px;
+
+  border-radius: 999px;
+
+  font-size: 11px;
+
+  font-weight: 700;
+
+  letter-spacing: 0.5px;
+}
+
+.badge-red {
+
+  background: rgba(239,68,68,0.12);
+  color: var(--red);
+}
+
+.badge-blue {
+
+  background: rgba(59,130,246,0.12);
+  color: var(--blue);
+}
+
+.badge-purple {
+
+  background: rgba(168,85,247,0.12);
+  color: var(--purple);
+}
+
+.badge-green {
+
+  background: rgba(34,197,94,0.12);
+  color: var(--green);
+}
+
+.badge-gold {
+
+  background: rgba(234,179,8,0.12);
+  color: var(--gold);
+}
+
+/*
+===================================
+ERROR
+===================================
+*/
+
+.error-card {
+
+  background: rgba(239,68,68,0.12);
+
+  border: 1px solid rgba(239,68,68,0.3);
+
+  border-radius: 14px;
+
+  padding: 14px;
+
+  margin-bottom: 14px;
+
+  color: var(--red);
+}
+
+/*
+===================================
+MATCH FEED
+===================================
+*/
+
+.feed-item {
+
+  padding: 14px 16px;
+
+  border-radius: 14px;
+
+  margin-bottom: 12px;
+
+  line-height: 1.7;
+
+  animation: fadeIn 0.35s ease;
+}
+
+.feed-item-elimination {
+
+  background: rgba(239,68,68,0.12);
+
+  border-left: 3px solid var(--red);
+}
+
+.feed-item-funny {
+
+  background: rgba(249,115,22,0.12);
+
+  border-left: 3px solid var(--orange);
+}
+
+.feed-item-survival {
+
+  background: rgba(34,197,94,0.12);
+
+  border-left: 3px solid var(--green);
+}
+
+.feed-item-narrator {
+
+  background: rgba(255,255,255,0.04);
+
+  color: var(--text2);
+
+  font-style: italic;
+}
+
+.feed-item-round {
+
+  text-align: center;
+
+  background: rgba(255,255,255,0.03);
+
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.feed-item-match-end {
+
+  text-align: center;
+
+  background: rgba(168,85,247,0.15);
+
+  border: 1px solid rgba(168,85,247,0.3);
+}
+
+.round-banner {
+
+  font-size: 18px;
+
+  font-weight: 800;
+
+  letter-spacing: 2px;
+}
+
+/*
+===================================
+ANIMATIONS
+===================================
+*/
+
+@keyframes fadeIn {
+
+  from {
+
+    opacity: 0;
+
+    transform: translateY(10px);
+  }
+
+  to {
+
+    opacity: 1;
+
+    transform: translateY(0);
+  }
 }
