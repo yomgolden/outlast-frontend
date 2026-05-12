@@ -8,6 +8,12 @@ export default function Profile() {
     user
   } = useUser();
 
+  /*
+  =====================================
+  XP PROGRESS
+  =====================================
+  */
+
   const nextLevelXP =
     (user?.level || 1) * 500;
 
@@ -94,7 +100,9 @@ export default function Profile() {
               fontSize: 12
             }}
           >
+
             {progress}% Progress
+
           </p>
 
         </div>
@@ -117,8 +125,11 @@ export default function Profile() {
         <p>
           Gold:
           {" "}
+
           <span className="gold">
+
             {user?.gold}
+
           </span>
         </p>
 
@@ -129,12 +140,15 @@ export default function Profile() {
         </p>
 
         <p>
-          Playstyle:
+          Wins:
           {" "}
-          {
-            user?.playstyle ||
-            "BALANCED"
-          }
+          {user?.wins || 0}
+        </p>
+
+        <p>
+          Matches:
+          {" "}
+          {user?.matches || 0}
         </p>
 
       </div>
@@ -161,13 +175,33 @@ export default function Profile() {
         <p>
           Arena Reputation:
           {" "}
-          UNKNOWN
+
+          {
+            (user?.wins || 0) >= 10
+              ? "FEARED"
+
+              : (user?.wins || 0) >= 3
+                ? "KNOWN"
+
+                : "UNKNOWN"
+          }
+
         </p>
 
         <p>
           Threat Level:
           {" "}
-          MEDIUM
+
+          {
+            (user?.level || 1) >= 10
+              ? "EXTREME"
+
+              : (user?.level || 1) >= 5
+                ? "HIGH"
+
+                : "MEDIUM"
+          }
+
         </p>
 
       </div>
@@ -186,10 +220,14 @@ export default function Profile() {
         </h3>
 
         <p>
-          "{user?.username}"
+
+          "
+          {user?.username}
+          "
           continues to survive
           the chaos spreading
           across the districts.
+
         </p>
 
       </div>
