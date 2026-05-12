@@ -87,7 +87,10 @@ export default function Queue() {
 
             if (
               data.status ===
-              "STARTED"
+                "STARTED" ||
+
+              data.status ===
+                "ENDED"
             ) {
 
               clearInterval(
