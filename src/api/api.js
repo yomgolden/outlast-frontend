@@ -1,209 +1,68 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL:
-    import.meta.env.VITE_API_URL,
-
+  baseURL: import.meta.env.VITE_API_URL,
   timeout: 60000
 });
 
-/*
-==================================
-RESPONSE INTERCEPTOR
-==================================
-*/
-
 api.interceptors.response.use(
-
   response => response,
-
   error => {
-
     if (!error.response) {
-
-      return Promise.reject({
-        message:
-          "Network error"
-      });
+      return Promise.reject({ message: "Network error" });
     }
-
-    return Promise.reject(
-      error.response.data
-    );
+    return Promise.reject(error.response.data);
   }
 );
 
-/*
-==================================
-AUTH
-==================================
-*/
+export const authTelegram = async (data) => {
+  const res = await api.post("/auth/telegram", data);
+  return res.data;
+};
 
-export const authTelegram =
-  async (
-    telegramData
-  ) => {
+export const getUser = async (userId) => {
+  const res = await api.get(`/user/${userId}`);
+  return res.data;
+};
 
-    const res =
-      await api.post(
-        "/auth/telegram",
-        telegramData
-      );
+export const createEvent = async (userId, username) => {
+  const res = await api.post("/match/create", { userId, username });
+  return res.data;
+};
 
-    return res.data;
-  };
+export const joinEvent = async (eventId, userId, username) => {
+  const res = await api.post("/match/join", { eventId, userId, username });
+  return res.data;
+};
 
-/*
-==================================
-USER
-==================================
-*/
+export const getEvents = async () => {
+  const res = await api.get("/match/events");
+  return res.data;
+};
 
-export const getUser =
-  async (
-    userId
-  ) => {
+export const getEventStatus = async (eventId) => {
+  const res = await api.get(`/match/${eventId}/status`);
+  return res.data;
+};
 
-    const res =
-      await api.get(
-        `/user/${userId}`
-      );
+export const startSimulation = async (matchId) => {
+  const res = await api.post(`/simulation/${matchId}/start`);
+  return res.data;
+};
 
-    return res.data;
-  };
+export const getSimulationFeed = async (matchId) => {
+  const res = await api.get(`/simulation/${matchId}/feed`);
+  return res.data;
+};
 
-/*
-==================================
-JOIN MATCH
-==================================
-*/
+export const getLeaderboard = async () => {
+  const res = await api.get("/leaderboard");
+  return res.data;
+};
 
-export const joinMatch =
-  async (
-    userId
-  ) => {
-
-    const res =
-      await api.post(
-        "/match/join",
-        { userId }
-      );
-
-    return res.data;
-  };
-
-/*
-==================================
-MATCH STATUS
-==================================
-*/
-
-export const getMatchStatus =
-  async (
-    matchId
-  ) => {
-
-    const res =
-      await api.get(
-        `/match/${matchId}/status`
-      );
-
-    return res.data;
-  };
-
-/*
-==================================
-MATCH FEED
-==================================
-*/
-
-export const getMatchFeed =
-  async (
-    matchId
-  ) => {
-
-    const res =
-      await api.get(
-        `/match/${matchId}/feed`
-      );
-
-    return res.data;
-  };
-
-/*
-==================================
-START SIMULATION
-==================================
-*/
-
-export const startSimulation =
-  async (
-    matchId
-  ) => {
-
-    const res =
-      await api.post(
-        `/simulation/${matchId}/start`
-      );
-
-    return res.data;
-  };
-
-/*
-==================================
-LIVE SIMULATION FEED
-==================================
-*/
-
-export const getSimulationFeed =
-  async (
-    matchId
-  ) => {
-
-    const res =
-      await api.get(
-        `/simulation/${matchId}/feed`
-      );
-
-    return res.data;
-  };
-
-/*
-==================================
-EQUIP TOOLS
-==================================
-*/
-
-export const equipTools =
-  async (
-    userId,
-    tools
-  ) => {
-
-    const res =
-      await api.post(
-        `/user/${userId}/equip`,
-        { tools }
-      );
-
-    return res.data;
-  };
-
-/*
-==================================
-LEADERBOARD
-==================================
-*/
-
-export const getLeaderboard =
-  async () => {
-
-    const res =
-      await api.get(
-        "/leaderboard"
-      );
-
-    return res.data;
-  };
+export const equipTools = async (userId, tools) => {
+  const res = await api.post(`/user/${userId}/equip`, { tools });
+  return res.data;
+};
 
 export default api;
