@@ -3,7 +3,14 @@ import {
   useState
 } from "react";
 
+import {
+  useNavigate
+} from "react-router-dom";
+
 export default function History() {
+
+  const navigate =
+    useNavigate();
 
   const [
     matches,
@@ -29,21 +36,75 @@ export default function History() {
 
   }, []);
 
+  /*
+  =====================================
+  CLEAR HISTORY
+  =====================================
+  */
+
+  const clearHistory =
+    () => {
+
+      localStorage.removeItem(
+        "outlast_history"
+      );
+
+      setMatches([]);
+    };
+
   return (
 
     <div className="page">
 
+      {/* HEADER */}
+
       <div
-        className="game-title"
         style={{
-          fontSize: 34,
+          display: "flex",
+          justifyContent:
+            "space-between",
+          alignItems:
+            "center",
           marginBottom: 20
         }}
       >
 
-        HISTORY
+        <div
+          className="game-title"
+          style={{
+            fontSize: 34
+          }}
+        >
+
+          HISTORY
+
+        </div>
+
+        {
+          matches.length > 0 && (
+
+            <button
+              className="btn-secondary"
+              style={{
+                width: "auto",
+                padding:
+                  "10px 14px",
+                fontSize: 12
+              }}
+              onClick={
+                clearHistory
+              }
+            >
+
+              CLEAR
+
+            </button>
+          )
+        }
 
       </div>
+
+      {/* EMPTY */}
 
       {
         matches.length === 0 && (
@@ -73,6 +134,8 @@ export default function History() {
         )
       }
 
+      {/* HISTORY LIST */}
+
       {
         matches.map(
           (
@@ -83,10 +146,20 @@ export default function History() {
             <div
               key={index}
               className="card"
+              onClick={() =>
+                navigate(
+                  `/history/${index}`
+                )
+              }
               style={{
-                marginBottom: 16
+                marginBottom: 16,
+                cursor: "pointer",
+                transition:
+                  "0.2s"
               }}
             >
+
+              {/* TOP */}
 
               <div
                 style={{
@@ -94,15 +167,36 @@ export default function History() {
                   justifyContent:
                     "space-between",
                   alignItems:
-                    "center"
+                    "center",
+                  gap: 10
                 }}
               >
 
-                <h3>
+                <div>
 
-                  {match.theme}
+                  <h3
+                    style={{
+                      marginBottom: 6
+                    }}
+                  >
 
-                </h3>
+                    {match.theme}
+
+                  </h3>
+
+                  <div
+                    style={{
+                      color:
+                        "var(--text3)",
+                      fontSize: 12
+                    }}
+                  >
+
+                    📍 {match.location}
+
+                  </div>
+
+                </div>
 
                 <span className="badge badge-red">
 
@@ -112,49 +206,172 @@ export default function History() {
 
               </div>
 
-              <p
+              {/* DIVIDER */}
+
+              <div
                 style={{
-                  marginTop: 12
+                  height: 1,
+                  background:
+                    "var(--border)",
+                  margin:
+                    "16px 0"
+                }}
+              />
+
+              {/* STATS */}
+
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns:
+                    "1fr 1fr",
+                  gap: 12
                 }}
               >
 
-                📍 {match.location}
+                <div>
 
-              </p>
+                  <div
+                    style={{
+                      color:
+                        "var(--text3)",
+                      fontSize: 11,
+                      marginBottom: 4
+                    }}
+                  >
 
-              <p
+                    WINNER
+
+                  </div>
+
+                  <div
+                    style={{
+                      fontWeight: 700
+                    }}
+                  >
+
+                    @{match.winner}
+
+                  </div>
+
+                </div>
+
+                <div>
+
+                  <div
+                    style={{
+                      color:
+                        "var(--text3)",
+                      fontSize: 11,
+                      marginBottom: 4
+                    }}
+                  >
+
+                    SURVIVORS
+
+                  </div>
+
+                  <div
+                    style={{
+                      fontWeight: 700
+                    }}
+                  >
+
+                    {match.totalPlayers}
+
+                  </div>
+
+                </div>
+
+                <div>
+
+                  <div
+                    style={{
+                      color:
+                        "var(--text3)",
+                      fontSize: 11,
+                      marginBottom: 4
+                    }}
+                  >
+
+                    ROUNDS
+
+                  </div>
+
+                  <div
+                    style={{
+                      fontWeight: 700
+                    }}
+                  >
+
+                    {match.rounds}
+
+                  </div>
+
+                </div>
+
+                <div>
+
+                  <div
+                    style={{
+                      color:
+                        "var(--text3)",
+                      fontSize: 11,
+                      marginBottom: 4
+                    }}
+                  >
+
+                    DATE
+
+                  </div>
+
+                  <div
+                    style={{
+                      fontWeight: 700,
+                      fontSize: 13
+                    }}
+                  >
+
+                    {match.date}
+
+                  </div>
+
+                </div>
+
+              </div>
+
+              {/* REPLAY */}
+
+              <div
                 style={{
-                  marginTop: 6
+                  marginTop: 18,
+                  display: "flex",
+                  justifyContent:
+                    "space-between",
+                  alignItems:
+                    "center"
                 }}
               >
 
-                Winner:
-                {" "}
-                @{match.winner}
+                <div
+                  style={{
+                    color:
+                      "var(--text3)",
+                    fontSize: 12
+                  }}
+                >
 
-              </p>
+                  Tap to replay match
 
-              <p
-                style={{
-                  marginTop: 6
-                }}
-              >
+                </div>
 
-                Survivors:
-                {" "}
-                {match.totalPlayers}
+                <span className="badge badge-purple">
 
-              </p>
+                  ▶ REPLAY
 
-              <p
-                style={{
-                  marginTop: 6
-                }}
-              >
+                </span>
 
-                {match.date}
-
-              </p>
+              </div>
 
             </div>
           )
