@@ -1,79 +1,29 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --bg: #050810;
+  --bg2: #080d1a;
+  --surface: #0d1424;
+  --surface2: #111c30;
+  --border: #1a2540;
+  --border2: #243050;
+
+  --red: #ef4444;
+  --orange: #f97316;
+  --green: #22c55e;
+  --gold: #eab308;
+  --purple: #a855f7;
+  --blue: #3b82f6;
+
+  --text: #f1f5f9;
+  --text2: #94a3b8;
+  --text3: #475569;
+
+  --nav-h: 64px;
+}
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-}
-
-body {
-  background: #070b14;
-  color: white;
-  font-family: Inter, sans-serif;
-}
-
-a {
-  text-decoration: none;
-  color: inherit;
-}
-
-button {
-  border: none;
-  cursor: pointer;
-}
-
-.app-container {
-  max-width: 480px;
-  margin: auto;
-  min-height: 100vh;
-  padding: 20px;
-}
-
-.card {
-  background: #111827;
-  border: 1px solid #1f2937;
-  border-radius: 18px;
-  padding: 16px;
-  margin-bottom: 16px;
-}
-
-.primary-btn {
-  width: 100%;
-  padding: 18px;
-  border-radius: 16px;
-  background: linear-gradient(
-    135deg,
-    #7c3aed,
-    #2563eb
-  );
-  color: white;
-  font-size: 18px;
-  font-weight: 700;
-}
-
-.gold {
-  color: #facc15;
-}
-
-.feed-item {
-  background: #0f172a;
-  padding: 12px;
-  border-radius: 12px;
-  margin-bottom: 10px;
-  font-size: 14px;
-}
-
-.center {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.title {
-  font-size: 28px;
-  font-weight: 800;
-  margin-bottom: 20px;
-}
-
-.subtitle {
-  opacity: 0.7;
-  margin-bottom: 20px;
 }
