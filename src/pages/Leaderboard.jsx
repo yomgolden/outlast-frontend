@@ -14,15 +14,32 @@ export default function Leaderboard() {
     setLeaderboard
   ] = useState([]);
 
+  /*
+  =====================================
+  LOAD LEADERBOARD
+  =====================================
+  */
+
   useEffect(() => {
 
     const load =
       async () => {
 
-        const data =
-          await getLeaderboard();
+        try {
 
-        setLeaderboard(data);
+          const data =
+            await getLeaderboard();
+
+          setLeaderboard(
+            data
+          );
+
+        } catch (err) {
+
+          console.error(
+            err
+          );
+        }
       };
 
     load();
@@ -30,43 +47,58 @@ export default function Leaderboard() {
   }, []);
 
   return (
+
     <div className="app-container">
 
       <h1 className="title">
         LEADERBOARD
       </h1>
 
-      {leaderboard.map(
-        (
-          player,
-          index
-        ) => (
+      {
+        leaderboard.map(
+          (
+            player,
+            index
+          ) => (
 
-          <div
-            key={index}
-            className="card"
-          >
+            <div
+              key={index}
+              className="card"
+            >
 
-            <h3>
-              #
-              {index + 1}
-            </h3>
+              <h3>
+                #
+                {index + 1}
+              </h3>
 
-            <p>
-              User:
-              {" "}
-              {player.userId}
-            </p>
+              <p>
+                Survivor:
+                {" "}
+                @{player.username}
+              </p>
 
-            <p>
-              Wins:
-              {" "}
-              {player.wins}
-            </p>
+              <p>
+                Wins:
+                {" "}
+                {player.wins}
+              </p>
 
-          </div>
+              <p>
+                Level:
+                {" "}
+                {player.level}
+              </p>
+
+              <p>
+                XP:
+                {" "}
+                {player.xp}
+              </p>
+
+            </div>
+          )
         )
-      )}
+      }
 
     </div>
   );
