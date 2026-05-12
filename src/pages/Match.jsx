@@ -95,7 +95,8 @@ export default function Match() {
     match,
     feed,
     setFeed,
-    setResults
+    setResults,
+    clearMatch
   } = useMatch();
 
   const [
@@ -163,7 +164,9 @@ export default function Match() {
 
     if (!match?.eventId) {
 
-      navigate("/");
+      navigate("/", {
+        replace: true
+      });
 
       return;
     }
@@ -329,8 +332,10 @@ export default function Match() {
             marginBottom: 12
           }}
         >
+
           {match?.theme ||
             "OUTLAST"}
+
         </h1>
 
         <div
@@ -494,7 +499,12 @@ export default function Match() {
               marginTop: 12
             }}
             onClick={() =>
-              navigate("/results")
+              navigate(
+                "/results",
+                {
+                  replace: true
+                }
+              )
             }
           >
 
@@ -507,9 +517,18 @@ export default function Match() {
             style={{
               marginTop: 10
             }}
-            onClick={() =>
-              navigate("/")
-            }
+            onClick={() => {
+
+              clearMatch();
+
+              navigate(
+                "/",
+                {
+                  replace: true
+                }
+              );
+
+            }}
           >
 
             RETURN HOME
