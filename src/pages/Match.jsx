@@ -28,7 +28,7 @@ function FeedItem({ item }) {
 
   /*
   ===================================
-  FEED STYLE
+  FEED CLASS
   ===================================
   */
 
@@ -59,7 +59,35 @@ function FeedItem({ item }) {
 
   /*
   ===================================
-  FORMAT FEED TEXT
+  ICONS
+  ===================================
+  */
+
+  const getIcon =
+    () => {
+
+      switch (item.type) {
+
+        case "ELIMINATION":
+          return "☠";
+
+        case "FUNNY_DEATH":
+          return "💀";
+
+        case "SURVIVAL":
+          return "✓";
+
+        case "MATCH_END":
+          return "🏆";
+
+        default:
+          return "";
+      }
+    };
+
+  /*
+  ===================================
+  FEED TEXT FORMATTER
   ===================================
   */
 
@@ -81,58 +109,12 @@ function FeedItem({ item }) {
       formatted =
         formatted.replace(
 
-          /@(\w+)/g,
+          /\b([A-Z][a-zA-Z0-9]+)\b/g,
 
           `
           <span
             style="
-              color: var(--red);
-              font-weight: 700;
-            "
-          >
-            @$1
-          </span>
-          `
-        );
-
-      /*
-      ===================================
-      WEAPONS / TOOLS
-      ===================================
-      */
-
-      formatted =
-        formatted.replace(
-
-          /\b(Knife|Shield|Smoke|Scanner|Machete|Bottle|Bat|Pistol|Rifle|Trap)\b/gi,
-
-          `
-          <span
-            style="
-              color: var(--purple);
-              font-weight: 700;
-            "
-          >
-            $1
-          </span>
-          `
-        );
-
-      /*
-      ===================================
-      LOCATIONS
-      ===================================
-      */
-
-      formatted =
-        formatted.replace(
-
-          /\b(lake|bridge|market|hospital|street|rooftop|warehouse|slum|alley|station)\b/gi,
-
-          `
-          <span
-            style="
-              color: var(--orange);
+              color: #ffffff;
               font-weight: 700;
             "
           >
@@ -150,12 +132,12 @@ function FeedItem({ item }) {
       formatted =
         formatted.replace(
 
-          /\b(eliminated|killed|destroyed|attacked|ambushed|stabbed|crushed)\b/gi,
+          /\b(eliminated|killed|destroyed|attacked|ambushed|stabbed|crushed|died)\b/gi,
 
           `
           <span
             style="
-              color: var(--red);
+              color: #ff4d4d;
               font-weight: 800;
             "
           >
@@ -173,12 +155,35 @@ function FeedItem({ item }) {
       formatted =
         formatted.replace(
 
-          /\b(survived|escaped|hid|healed|revived)\b/gi,
+          /\b(survived|escaped|hid|revived)\b/gi,
 
           `
           <span
             style="
-              color: var(--green);
+              color: #22c55e;
+              font-weight: 700;
+            "
+          >
+            $1
+          </span>
+          `
+        );
+
+      /*
+      ===================================
+      LOCATION WORDS
+      ===================================
+      */
+
+      formatted =
+        formatted.replace(
+
+          /\b(Ibadan|Makoko|Yaba|Aba|Lekki|Ajegunle|Surulere|Ikorodu)\b/gi,
+
+          `
+          <span
+            style="
+              color: #f97316;
               font-weight: 700;
             "
           >
@@ -203,7 +208,13 @@ function FeedItem({ item }) {
 
     return (
 
-      <div className={getClass()}>
+      <div
+        className={getClass()}
+        style={{
+          animation:
+            "fadeSlideIn 0.4s ease"
+        }}
+      >
 
         <div className="round-banner">
 
@@ -223,16 +234,48 @@ function FeedItem({ item }) {
 
   return (
 
-    <div className={getClass()}>
+    <div
+      className={getClass()}
+      style={{
+        animation:
+          "fadeSlideIn 0.4s ease"
+      }}
+    >
 
       <div
-        dangerouslySetInnerHTML={{
-          __html:
-            formatMessage(
-              item.message
-            )
+        style={{
+          display: "flex",
+          gap: 10,
+          alignItems: "flex-start"
         }}
-      />
+      >
+
+        <div
+          style={{
+            fontSize: 18,
+            opacity: 0.9,
+            marginTop: 2
+          }}
+        >
+
+          {getIcon()}
+
+        </div>
+
+        <div
+          style={{
+            flex: 1,
+            lineHeight: 1.8
+          }}
+          dangerouslySetInnerHTML={{
+            __html:
+              formatMessage(
+                item.message
+              )
+          }}
+        />
+
+      </div>
 
     </div>
   );
@@ -361,7 +404,7 @@ export default function Match() {
 
           /*
           ===================================
-          STREAM FEED LOCALLY
+          STREAM FEED
           ===================================
           */
 
@@ -404,7 +447,7 @@ export default function Match() {
 
             /*
             ===================================
-            ALIVE
+            ALIVE COUNT
             ===================================
             */
 
@@ -420,7 +463,7 @@ export default function Match() {
 
             /*
             ===================================
-            FEED SPEED
+            DELAY
             ===================================
             */
 
@@ -435,7 +478,7 @@ export default function Match() {
 
           /*
           ===================================
-          STORE RESULTS
+          RESULTS
           ===================================
           */
 
@@ -446,7 +489,7 @@ export default function Match() {
 
           /*
           ===================================
-          SAVE MATCH HISTORY
+          SAVE HISTORY
           ===================================
           */
 
@@ -492,14 +535,10 @@ export default function Match() {
 
           });
 
-          /*
-          ===================================
-          LIMIT HISTORY
-          ===================================
-          */
-
           localStorage.setItem(
+
             "outlast_history",
+
             JSON.stringify(
               history.slice(0, 20)
             )
@@ -507,7 +546,7 @@ export default function Match() {
 
           /*
           ===================================
-          MATCH COMPLETE
+          COMPLETE
           ===================================
           */
 
@@ -541,8 +580,8 @@ export default function Match() {
         }}
       >
 
-        <h1
-          className="title"
+        <div
+          className="game-title"
           style={{
             marginBottom: 12
           }}
@@ -551,7 +590,7 @@ export default function Match() {
           {match?.theme ||
             "OUTLAST"}
 
-        </h1>
+        </div>
 
         <div
           style={{
@@ -587,20 +626,46 @@ export default function Match() {
 
       <div className="card">
 
-        <p>
+        <p
+          style={{
+            fontSize: 18,
+            fontWeight: 700
+          }}
+        >
 
           Danger:
           {" "}
 
-          {match?.danger ||
-            "HIGH"}
+          <span
+            style={{
+              color:
+                match?.danger ===
+                "EXTREME"
+
+                  ? "var(--red)"
+
+                  : match?.danger ===
+                    "HIGH"
+
+                  ? "var(--orange)"
+
+                  : "var(--gold)"
+            }}
+          >
+
+            {match?.danger ||
+              "HIGH"}
+
+          </span>
 
         </p>
 
         <p
           style={{
-            marginTop: 8,
-            color: "var(--text2)"
+            marginTop: 10,
+            color: "var(--text2)",
+            lineHeight: 1.7,
+            fontStyle: "italic"
           }}
         >
 
@@ -615,7 +680,24 @@ export default function Match() {
 
       {starting && (
 
-        <div className="card">
+        <div
+          className="card"
+          style={{
+            textAlign:
+              "center"
+          }}
+        >
+
+          <div
+            style={{
+              fontSize: 40,
+              marginBottom: 10
+            }}
+          >
+
+            ⚡
+
+          </div>
 
           <h3>
 
@@ -625,7 +707,9 @@ export default function Match() {
 
           <p
             style={{
-              marginTop: 10
+              marginTop: 10,
+              color:
+                "var(--text2)"
             }}
           >
 
@@ -676,7 +760,7 @@ export default function Match() {
 
         <div
           style={{
-            marginTop: 20
+            marginTop: 24
           }}
         >
 
@@ -684,11 +768,33 @@ export default function Match() {
             className="card"
             style={{
               textAlign:
-                "center"
+                "center",
+
+              background:
+                "linear-gradient(135deg, rgba(239,68,68,0.12), rgba(168,85,247,0.08))",
+
+              border:
+                "1px solid rgba(239,68,68,0.25)"
             }}
           >
 
-            <h2>
+            <div
+              style={{
+                fontSize: 42,
+                marginBottom: 10
+              }}
+            >
+
+              ☠
+
+            </div>
+
+            <h2
+              style={{
+                fontSize: 28,
+                letterSpacing: 3
+              }}
+            >
 
               MATCH COMPLETE
 
@@ -711,7 +817,7 @@ export default function Match() {
           <button
             className="btn-primary"
             style={{
-              marginTop: 12
+              marginTop: 14
             }}
             onClick={() =>
               navigate(
