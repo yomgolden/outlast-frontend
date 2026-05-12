@@ -26,140 +26,419 @@ import Loader from "../components/Loader";
 
 export default function Home() {
 
-  const navigate = useNavigate();
+  const navigate =
+    useNavigate();
 
-  const { user, loading, error } = useUser();
-  const { setMatch } = useMatch();
+  const {
+    user,
+    loading,
+    error
+  } = useUser();
 
-  const [leaderboard, setLeaderboard] = useState([]);
-  const [events, setEvents] = useState([]);
-  const [creating, setCreating] = useState(false);
-  const [joinError, setJoinError] = useState("");
+  const {
+    setMatch
+  } = useMatch();
+
+  const [
+    leaderboard,
+    setLeaderboard
+  ] = useState([]);
+
+  const [
+    events,
+    setEvents
+  ] = useState([]);
+
+  const [
+    creating,
+    setCreating
+  ] = useState(false);
+
+  const [
+    joinError,
+    setJoinError
+  ] = useState("");
+
+  /*
+  =====================================
+  LOAD DATA
+  =====================================
+  */
 
   useEffect(() => {
 
-    const load = async () => {
-      try {
-        const board = await getLeaderboard();
-        setLeaderboard(board.slice(0, 5));
+    const load =
+      async () => {
 
-        const liveEvents = await getEvents();
-        setEvents(liveEvents);
-      } catch (err) {
-        console.error(err);
-      }
-    };
+        try {
+
+          const board =
+            await getLeaderboard();
+
+          setLeaderboard(
+            board.slice(0, 5)
+          );
+
+          const liveEvents =
+            await getEvents();
+
+          setEvents(
+            liveEvents
+          );
+
+        } catch (err) {
+
+          console.error(
+            err
+          );
+        }
+      };
 
     load();
 
-    const poll = setInterval(load, 5000);
-    return () => clearInterval(poll);
+    const poll =
+      setInterval(
+        load,
+        5000
+      );
+
+    return () =>
+      clearInterval(
+        poll
+      );
 
   }, []);
 
-  const handleCreate = async () => {
-    try {
-      setCreating(true);
-      setJoinError("");
+  /*
+  =====================================
+  CREATE EVENT
+  =====================================
+  */
 
-      const data = await createEvent(user._id, user.username);
-      setMatch(data);
-      navigate("/queue");
+  const handleCreate =
+    async () => {
 
-    } catch (err) {
-      setJoinError(err.message || "Failed to create event");
-    } finally {
-      setCreating(false);
-    }
-  };
+      try {
 
-  const handleJoin = async (eventId) => {
-    try {
-      setJoinError("");
+        setCreating(
+          true
+        );
 
-      const data = await joinEvent(eventId, user._id, user.username);
-      setMatch(data);
-      navigate("/queue");
+        setJoinError(
+          ""
+        );
 
-    } catch (err) {
-      setJoinError(err.message || "Failed to join event");
-    }
-  };
+        const data =
+          await createEvent(
+            user._id,
+            user.username
+          );
 
-  if (loading) return <Loader />;
+        setMatch(
+          data
+        );
+
+        navigate(
+          "/queue"
+        );
+
+      } catch (err) {
+
+        setJoinError(
+          err.message ||
+          "Failed to create event"
+        );
+
+      } finally {
+
+        setCreating(
+          false
+        );
+      }
+    };
+
+  /*
+  =====================================
+  JOIN EVENT
+  =====================================
+  */
+
+  const handleJoin =
+    async (
+      eventId
+    ) => {
+
+      try {
+
+        setJoinError(
+          ""
+        );
+
+        const data =
+          await joinEvent(
+            eventId,
+            user._id,
+            user.username
+          );
+
+        setMatch(
+          data
+        );
+
+        navigate(
+          "/queue"
+        );
+
+      } catch (err) {
+
+        setJoinError(
+          err.message ||
+          "Failed to join event"
+        );
+      }
+    };
+
+  /*
+  =====================================
+  LOADING
+  =====================================
+  */
+
+  if (loading)
+    return <Loader />;
 
   return (
+
     <div className="app-container">
 
-      <h1 className="title">OUTLAST</h1>
+      <h1 className="title">
+        OUTLAST
+      </h1>
+
+      {/* ERROR */}
 
       {error && (
-        <div className="card">{error}</div>
+
+        <div className="card">
+
+          {error}
+
+        </div>
+
       )}
 
+      {/* USER */}
+
       <div className="card">
-        <h3>@{user?.username}</h3>
-        <p>Gold: <span className="gold">{user?.gold}</span></p>
-        <p>Gems: {user?.gems}</p>
-        <p>Level: {user?.level}</p>
-        <p>XP: {user?.xp}</p>
+
+        <h3>
+          @{user?.username}
+        </h3>
+
+        <p>
+          Gold:
+          {" "}
+          <span className="gold">
+            {user?.gold}
+          </span>
+        </p>
+
+        <p>
+          Gems:
+          {" "}
+          {user?.gems}
+        </p>
+
+        <p>
+          Level:
+          {" "}
+          {user?.level}
+        </p>
+
+        <p>
+          XP:
+          {" "}
+          {user?.xp}
+        </p>
+
       </div>
+
+      {/* CREATE */}
 
       <button
         className="primary-btn"
         disabled={creating}
         onClick={handleCreate}
       >
-        {creating ? "CREATING..." : "START SURVIVAL EVENT"}
+
+        {
+          creating
+            ? "CREATING..."
+            : "START SURVIVAL EVENT"
+        }
+
       </button>
 
+      {/* JOIN ERROR */}
+
       {joinError && (
-        <div className="card" style={{ marginTop: 10 }}>
+
+        <div
+          className="card"
+          style={{
+            marginTop: 10
+          }}
+        >
+
           {joinError}
+
         </div>
+
       )}
 
-      <div className="card" style={{ marginTop: 20 }}>
-        <h3>Active Survival Events</h3>
+      {/* ACTIVE EVENTS */}
 
-        {events.length === 0 && (
-          <p>No active events</p>
-        )}
+      <div
+        className="card"
+        style={{
+          marginTop: 20
+        }}
+      >
 
-        {events.map((event, index) => (
-          <div
-            key={index}
-            style={{
-              marginTop: 20,
-              paddingBottom: 20,
-              borderBottom: "1px solid #333"
-            }}
-          >
-            <h4>{event.theme}</h4>
-            <p>Host: @{event.host}</p>
-            <p>Location: {event.location}</p>
-            <p>Danger: {event.danger}</p>
-            <p>Players: {event.players?.length}/{event.maxPlayers}</p>
-            <p>Starts In: {event.countdown}s</p>
+        <h3>
+          Active Survival Events
+        </h3>
 
-            <button
-              className="primary-btn"
-              onClick={() => handleJoin(event.eventId)}
-              disabled={event.status !== "WAITING"}
-            >
-              {event.status === "WAITING" ? "JOIN EVENT" : "STARTED"}
-            </button>
-          </div>
-        ))}
+        {
+          events.length === 0 && (
+
+            <p>
+              No active events
+            </p>
+          )
+        }
+
+        {
+          events.map(
+            (
+              event,
+              index
+            ) => (
+
+              <div
+                key={index}
+                style={{
+                  marginTop: 20,
+                  paddingBottom: 20,
+                  borderBottom:
+                    "1px solid #333"
+                }}
+              >
+
+                <h4>
+                  {event.theme}
+                </h4>
+
+                <p>
+                  Host:
+                  {" "}
+                  @{event.host}
+                </p>
+
+                <p>
+                  Location:
+                  {" "}
+                  {event.location}
+                </p>
+
+                <p>
+                  Danger:
+                  {" "}
+                  {event.danger}
+                </p>
+
+                <p>
+                  Players:
+                  {" "}
+                  {event.playerCount}
+                  /
+                  {event.maxPlayers}
+                </p>
+
+                <p>
+                  Starts In:
+                  {" "}
+                  {event.countdown}s
+                </p>
+
+                <button
+                  className="primary-btn"
+                  onClick={() =>
+                    handleJoin(
+                      event.eventId
+                    )
+                  }
+                  disabled={
+                    event.status !==
+                    "WAITING"
+                  }
+                >
+
+                  {
+                    event.status ===
+                    "WAITING"
+
+                      ? "JOIN EVENT"
+
+                      : "STARTED"
+                  }
+
+                </button>
+
+              </div>
+            )
+          )
+        }
+
       </div>
 
-      <div className="card" style={{ marginTop: 20 }}>
-        <h3>Top Survivors</h3>
-        {leaderboard.map((player, index) => (
-          <div key={index} style={{ marginTop: 10 }}>
-            #{index + 1} {player.userId}
-          </div>
-        ))}
+      {/* LEADERBOARD */}
+
+      <div
+        className="card"
+        style={{
+          marginTop: 20
+        }}
+      >
+
+        <h3>
+          Top Survivors
+        </h3>
+
+        {
+          leaderboard.map(
+            (
+              player,
+              index
+            ) => (
+
+              <div
+                key={index}
+                style={{
+                  marginTop: 10
+                }}
+              >
+
+                #
+                {index + 1}
+                {" "}
+                @{player.username}
+
+              </div>
+            )
+          )
+        }
+
       </div>
 
     </div>
