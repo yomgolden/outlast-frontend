@@ -292,6 +292,55 @@ export default function Match() {
 
           /*
           ===================================
+          SAVE MATCH HISTORY
+          ===================================
+          */
+
+          const history =
+            JSON.parse(
+              localStorage.getItem(
+                "outlast_history"
+              ) || "[]"
+            );
+
+          history.unshift({
+
+            theme:
+              match?.theme,
+
+            location:
+              match?.location,
+
+            danger:
+              match?.danger,
+
+            winner:
+              data.finalResults?.[0]
+                ?.username ||
+              "Unknown",
+
+            totalPlayers:
+              data.finalResults
+                ?.length || 0,
+
+            rounds:
+              round,
+
+            date:
+              new Date()
+                .toLocaleString()
+
+          });
+
+          localStorage.setItem(
+            "outlast_history",
+            JSON.stringify(
+              history.slice(0, 20)
+            )
+          );
+
+          /*
+          ===================================
           MATCH COMPLETE
           ===================================
           */
