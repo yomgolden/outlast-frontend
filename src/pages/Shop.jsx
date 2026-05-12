@@ -1,12 +1,4 @@
 import {
-  useState
-} from "react";
-
-import {
-  equipTools
-} from "../api/api";
-
-import {
   useUser
 } from "../context/UserContext";
 
@@ -32,99 +24,70 @@ const TOOLS = [
 export default function Shop() {
 
   const {
-    user,
-    loadUser
+    user
   } = useUser();
 
-  const [
-    error,
-    setError
-  ] = useState("");
-
-  const buyTool =
-    async (
-      toolName,
-      cost
-    ) => {
-
-      try {
-
-        if (
-          user.gold < cost
-        ) {
-
-          setError(
-            "Not enough gold"
-          );
-
-          return;
-        }
-
-        await equipTools(
-          user._id,
-          [toolName]
-        );
-
-        await loadUser(
-          user._id
-        );
-
-        setError("");
-
-      } catch (err) {
-
-        setError(
-          err.message
-        );
-      }
-    };
-
   return (
+
     <div className="app-container">
 
       <h1 className="title">
         SHOP
       </h1>
 
-      {error && (
-        <div className="card">
-          {error}
-        </div>
-      )}
+      <div className="card">
 
-      {TOOLS.map(tool => (
+        <p>
+          Gold:
+          {" "}
 
-        <div
-          key={tool.name}
-          className="card"
-        >
+          <span className="gold">
+            {user?.gold}
+          </span>
 
-          <h3>
-            {tool.name}
-          </h3>
+        </p>
 
-          <p>
-            Cost:
-            {" "}
-            <span className="gold">
-              {tool.cost}
-            </span>
-          </p>
+        <p>
+          Shop system is currently
+          under reconstruction.
+        </p>
 
-          <button
-            className="primary-btn"
-            onClick={() =>
-              buyTool(
-                tool.name,
-                tool.cost
-              )
-            }
+      </div>
+
+      {
+        TOOLS.map(tool => (
+
+          <div
+            key={tool.name}
+            className="card"
           >
-            BUY
-          </button>
 
-        </div>
-      ))}
+            <h3>
+              {tool.name}
+            </h3>
+
+            <p>
+              Cost:
+              {" "}
+
+              <span className="gold">
+                {tool.cost}
+              </span>
+
+            </p>
+
+            <button
+              className="primary-btn"
+              disabled
+            >
+
+              COMING SOON
+
+            </button>
+
+          </div>
+        ))
+      }
 
     </div>
   );
