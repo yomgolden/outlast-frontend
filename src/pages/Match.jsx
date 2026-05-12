@@ -16,6 +16,76 @@ import {
   useMatch
 } from "../context/MatchContext";
 
+const FEED_SPEED = 2200;
+
+/*
+===================================
+FEED ITEM COMPONENT
+===================================
+*/
+
+function FeedItem({ item }) {
+
+  const getClass =
+    () => {
+
+      switch (item.type) {
+
+        case "ELIMINATION":
+          return "feed-item feed-item-elimination";
+
+        case "FUNNY_DEATH":
+          return "feed-item feed-item-funny";
+
+        case "SURVIVAL":
+          return "feed-item feed-item-survival";
+
+        case "ROUND_START":
+          return "feed-item feed-item-round";
+
+        case "MATCH_END":
+          return "feed-item feed-item-match-end";
+
+        default:
+          return "feed-item feed-item-narrator";
+      }
+    };
+
+  /*
+  ===================================
+  ROUND CARD
+  ===================================
+  */
+
+  if (
+    item.type ===
+    "ROUND_START"
+  ) {
+
+    return (
+
+      <div className={getClass()}>
+
+        <div className="round-banner">
+
+          {item.message}
+
+        </div>
+
+      </div>
+    );
+  }
+
+  return (
+
+    <div className={getClass()}>
+
+      {item.message}
+
+    </div>
+  );
+}
+
 export default function Match() {
 
   const navigate =
@@ -48,8 +118,40 @@ export default function Match() {
     setStarting
   ] = useState(true);
 
+  const [
+    complete,
+    setComplete
+  ] = useState(false);
+
   const startedRef =
     useRef(false);
+
+  const feedRef =
+    useRef(null);
+
+  /*
+  ===================================
+  AUTO SCROLL
+  ===================================
+  */
+
+  useEffect(() => {
+
+    if (
+      feedRef.current
+    ) {
+
+      feedRef.current.scrollTop =
+        feedRef.current.scrollHeight;
+    }
+
+  }, [feed]);
+
+  /*
+  ===================================
+  LOAD MATCH
+  ===================================
+  */
 
   useEffect(() => {
 
@@ -169,14 +271,14 @@ export default function Match() {
               resolve =>
                 setTimeout(
                   resolve,
-                  2500
+                  FEED_SPEED
                 )
             );
           }
 
           /*
           ===================================
-          RESULTS
+          STORE RESULTS
           ===================================
           */
 
@@ -185,16 +287,13 @@ export default function Match() {
               data.finalResults || []
           });
 
-          setTimeout(
-            () => {
+          /*
+          ===================================
+          MATCH COMPLETE
+          ===================================
+          */
 
-              navigate(
-                "/results"
-              );
-
-            },
-            3000
-          );
+          setComplete(true);
 
         } catch (err) {
 
@@ -214,45 +313,80 @@ export default function Match() {
 
   return (
 
-    <div className="app-container">
+    <div className="page">
 
-      <h1 className="title">
-        {match?.theme ||
-          "OUTLAST"}
-      </h1>
+      {/* HEADER */}
+
+      <div
+        style={{
+          marginBottom: 20
+        }}
+      >
+
+        <h1
+          className="title"
+          style={{
+            marginBottom: 12
+          }}
+        >
+          {match?.theme ||
+            "OUTLAST"}
+        </h1>
+
+        <div
+          style={{
+            display: "flex",
+            gap: 8,
+            flexWrap: "wrap"
+          }}
+        >
+
+          <span className="badge badge-blue">
+
+            📍 {match?.location}
+
+          </span>
+
+          <span className="badge badge-purple">
+
+            ROUND {round}
+
+          </span>
+
+          <span className="badge badge-red">
+
+            ☠ {alive} ALIVE
+
+          </span>
+
+        </div>
+
+      </div>
 
       {/* MATCH INFO */}
 
       <div className="card">
 
         <p>
-          Location:
-          {" "}
-          {
-            match?.location ||
-            "Unknown"
-          }
-        </p>
 
-        <p>
           Danger:
           {" "}
-          {
-            match?.danger ||
-            "HIGH"
-          }
+
+          {match?.danger ||
+            "HIGH"}
+
         </p>
 
-        <p>
-          Round:
-          {" "}
-          {round}
-        </p>
+        <p
+          style={{
+            marginTop: 8,
+            color: "var(--text2)"
+          }}
+        >
 
-        <p>
-          Survivors:
-          {" "}
-          {alive}
+          Survivors are trapped
+          inside the district.
+
         </p>
 
       </div>
@@ -264,12 +398,20 @@ export default function Match() {
         <div className="card">
 
           <h3>
+
             Arena Opening...
+
           </h3>
 
-          <p>
+          <p
+            style={{
+              marginTop: 10
+            }}
+          >
+
             Survivors are entering
             the district.
+
           </p>
 
         </div>
@@ -280,7 +422,7 @@ export default function Match() {
 
       {error && (
 
-        <div className="card">
+        <div className="error-card">
 
           {error}
 
@@ -290,7 +432,7 @@ export default function Match() {
 
       {/* FEED */}
 
-      <div>
+      <div ref={feedRef}>
 
         {feed.map(
           (
@@ -298,18 +440,85 @@ export default function Match() {
             index
           ) => (
 
-            <div
+            <FeedItem
               key={index}
-              className="feed-item"
-            >
+              item={item}
+            />
 
-              {item.message}
-
-            </div>
           )
         )}
 
       </div>
+
+      {/* MATCH COMPLETE */}
+
+      {complete && (
+
+        <div
+          style={{
+            marginTop: 20
+          }}
+        >
+
+          <div
+            className="card"
+            style={{
+              textAlign:
+                "center"
+            }}
+          >
+
+            <h2>
+
+              MATCH COMPLETE
+
+            </h2>
+
+            <p
+              style={{
+                marginTop: 10,
+                color:
+                  "var(--text2)"
+              }}
+            >
+
+              The district has gone silent.
+
+            </p>
+
+          </div>
+
+          <button
+            className="btn-primary"
+            style={{
+              marginTop: 12
+            }}
+            onClick={() =>
+              navigate("/results")
+            }
+          >
+
+            VIEW RESULTS
+
+          </button>
+
+          <button
+            className="btn-secondary"
+            style={{
+              marginTop: 10
+            }}
+            onClick={() =>
+              navigate("/")
+            }
+          >
+
+            RETURN HOME
+
+          </button>
+
+        </div>
+
+      )}
 
     </div>
   );
