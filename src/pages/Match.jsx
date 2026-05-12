@@ -9,8 +9,7 @@ import {
 } from "react-router-dom";
 
 import {
-  startSimulation,
-  getSimulationFeed
+  getEventFeed
 } from "../api/api";
 
 import {
@@ -83,139 +82,119 @@ export default function Match() {
     startedRef.current =
       true;
 
-    let interval;
-
-    const start =
+    const loadMatch =
       async () => {
 
         try {
 
           /*
           ===================================
-          START BACKGROUND SIMULATION
+          GET FULL FEED
           ===================================
           */
 
-          await startSimulation(
-            match.eventId
-          );
+          const data =
+            await getEventFeed(
+              match.eventId
+            );
 
           setStarting(false);
 
           /*
           ===================================
-          POLL FEED
+          STREAM FEED LOCALLY
           ===================================
           */
 
-          interval =
-            setInterval(
-              async () => {
+          let currentFeed =
+            [];
 
-                try {
+          for (
+            let i = 0;
+            i <
+            data.feed.length;
+            i++
+          ) {
 
-                  const data =
-                    await getSimulationFeed(
-                      match.eventId
-                    );
+            const item =
+              data.feed[i];
 
-                  /*
-                  ===================================
-                  UPDATE FEED
-                  ===================================
-                  */
+            currentFeed = [
+              ...currentFeed,
+              item
+            ];
 
-                  setFeed(
-                    data.feed || []
-                  );
-
-                  /*
-                  ===================================
-                  LAST FEED ITEM
-                  ===================================
-                  */
-
-                  const last =
-                    data.feed?.[
-                      data.feed.length - 1
-                    ];
-
-                  if (last) {
-
-                    /*
-                    ===================================
-                    ROUND
-                    ===================================
-                    */
-
-                    if (
-                      last.round
-                    ) {
-
-                      setRound(
-                        last.round
-                      );
-                    }
-
-                    /*
-                    ===================================
-                    ALIVE COUNT
-                    ===================================
-                    */
-
-                    if (
-                      typeof last.aliveCount ===
-                      "number"
-                    ) {
-
-                      setAlive(
-                        last.aliveCount
-                      );
-                    }
-                  }
-
-                  /*
-                  ===================================
-                  MATCH COMPLETE
-                  ===================================
-                  */
-
-                  if (
-                    data.status ===
-                    "ENDED"
-                  ) {
-
-                    clearInterval(
-                      interval
-                    );
-
-                    setResults({
-                      results:
-                        data.results
-                    });
-
-                    setTimeout(
-                      () => {
-
-                        navigate(
-                          "/results"
-                        );
-
-                      },
-                      3000
-                    );
-                  }
-
-                } catch (err) {
-
-                  console.error(
-                    err
-                  );
-                }
-
-              },
-              1000
+            setFeed(
+              currentFeed
             );
+
+            /*
+            ===================================
+            ROUND
+            ===================================
+            */
+
+            if (
+              item.round
+            ) {
+
+              setRound(
+                item.round
+              );
+            }
+
+            /*
+            ===================================
+            ALIVE
+            ===================================
+            */
+
+            if (
+              typeof item.aliveCount ===
+              "number"
+            ) {
+
+              setAlive(
+                item.aliveCount
+              );
+            }
+
+            /*
+            ===================================
+            FEED SPEED
+            ===================================
+            */
+
+            await new Promise(
+              resolve =>
+                setTimeout(
+                  resolve,
+                  2500
+                )
+            );
+          }
+
+          /*
+          ===================================
+          RESULTS
+          ===================================
+          */
+
+          setResults({
+            results:
+              data.finalResults || []
+          });
+
+          setTimeout(
+            () => {
+
+              navigate(
+                "/results"
+              );
+
+            },
+            3000
+          );
 
         } catch (err) {
 
@@ -224,22 +203,12 @@ export default function Match() {
           );
 
           setError(
-            "Failed to start simulation"
+            "Failed to load match"
           );
         }
       };
 
-    start();
-
-    return () => {
-
-      if (interval) {
-
-        clearInterval(
-          interval
-        );
-      }
-    };
+    loadMatch();
 
   }, []);
 
