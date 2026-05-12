@@ -9,7 +9,8 @@ import {
 } from "react-router-dom";
 
 import {
-  simulateMatch
+  startSimulation,
+  getSimulationFeed
 } from "../api/api";
 
 import {
@@ -18,7 +19,8 @@ import {
 
 export default function Match() {
 
-  const navigate = useNavigate();
+  const navigate =
+    useNavigate();
 
   const {
     match,
@@ -27,96 +29,317 @@ export default function Match() {
     setResults
   } = useMatch();
 
-  const [round, setRound] = useState(1);
-  const [alive, setAlive] = useState(20);
-  const [error, setError] = useState("");
-  const [starting, setStarting] = useState(true);
+  const [
+    round,
+    setRound
+  ] = useState(1);
 
-  const startedRef = useRef(false);
+  const [
+    alive,
+    setAlive
+  ] = useState(20);
+
+  const [
+    error,
+    setError
+  ] = useState("");
+
+  const [
+    starting,
+    setStarting
+  ] = useState(true);
+
+  const startedRef =
+    useRef(false);
 
   useEffect(() => {
 
+    /*
+    ===================================
+    NO EVENT
+    ===================================
+    */
+
     if (!match?.eventId) {
+
       navigate("/");
+
       return;
     }
 
-    if (startedRef.current) return;
-    startedRef.current = true;
+    /*
+    ===================================
+    PREVENT DOUBLE START
+    ===================================
+    */
 
-    const startSimulation = async () => {
-      try {
+    if (
+      startedRef.current
+    ) {
 
-        const data = await simulateMatch(match.eventId);
+      return;
+    }
 
-        setStarting(false);
+    startedRef.current =
+      true;
 
-        let currentFeed = [];
+    let interval;
 
-        for (let i = 0; i < data.feed.length; i++) {
+    const start =
+      async () => {
 
-          const item = data.feed[i];
+        try {
 
-          currentFeed = [...currentFeed, item];
-          setFeed(currentFeed);
+          /*
+          ===================================
+          START BACKGROUND SIMULATION
+          ===================================
+          */
 
-          if (item.round) setRound(item.round);
+          await startSimulation(
+            match.eventId
+          );
 
-          if (item.aliveCount) {
-            setAlive(item.aliveCount);
-          } else if (item.message?.includes("PLAYERS REMAIN")) {
-            const number = parseInt(item.message);
-            if (!isNaN(number)) setAlive(number);
-          }
+          setStarting(false);
 
-          await new Promise(resolve => setTimeout(resolve, 2500));
+          /*
+          ===================================
+          POLL FEED
+          ===================================
+          */
+
+          interval =
+            setInterval(
+              async () => {
+
+                try {
+
+                  const data =
+                    await getSimulationFeed(
+                      match.eventId
+                    );
+
+                  /*
+                  ===================================
+                  UPDATE FEED
+                  ===================================
+                  */
+
+                  setFeed(
+                    data.feed || []
+                  );
+
+                  /*
+                  ===================================
+                  LAST FEED ITEM
+                  ===================================
+                  */
+
+                  const last =
+                    data.feed?.[
+                      data.feed.length - 1
+                    ];
+
+                  if (last) {
+
+                    /*
+                    ===================================
+                    ROUND
+                    ===================================
+                    */
+
+                    if (
+                      last.round
+                    ) {
+
+                      setRound(
+                        last.round
+                      );
+                    }
+
+                    /*
+                    ===================================
+                    ALIVE COUNT
+                    ===================================
+                    */
+
+                    if (
+                      typeof last.aliveCount ===
+                      "number"
+                    ) {
+
+                      setAlive(
+                        last.aliveCount
+                      );
+                    }
+                  }
+
+                  /*
+                  ===================================
+                  MATCH COMPLETE
+                  ===================================
+                  */
+
+                  if (
+                    data.status ===
+                    "ENDED"
+                  ) {
+
+                    clearInterval(
+                      interval
+                    );
+
+                    setResults({
+                      results:
+                        data.results
+                    });
+
+                    setTimeout(
+                      () => {
+
+                        navigate(
+                          "/results"
+                        );
+
+                      },
+                      3000
+                    );
+                  }
+
+                } catch (err) {
+
+                  console.error(
+                    err
+                  );
+                }
+
+              },
+              1000
+            );
+
+        } catch (err) {
+
+          console.error(
+            err
+          );
+
+          setError(
+            "Failed to start simulation"
+          );
         }
+      };
 
-        setResults({ results: data.results });
+    start();
 
-        setTimeout(() => navigate("/results"), 4000);
+    return () => {
 
-      } catch (err) {
-        console.error(err);
-        setError(err.message || "Simulation failed");
+      if (interval) {
+
+        clearInterval(
+          interval
+        );
       }
     };
-
-    startSimulation();
 
   }, []);
 
   return (
+
     <div className="app-container">
 
       <h1 className="title">
-        {match?.theme || "OUTLAST"}
+        {match?.theme ||
+          "OUTLAST"}
       </h1>
 
+      {/* MATCH INFO */}
+
       <div className="card">
-        <p>Location: {match?.location || "Unknown"}</p>
-        <p>Danger: {match?.danger || "HIGH"}</p>
-        <p>Round: {round}</p>
-        <p>Survivors: {alive}</p>
+
+        <p>
+          Location:
+          {" "}
+          {
+            match?.location ||
+            "Unknown"
+          }
+        </p>
+
+        <p>
+          Danger:
+          {" "}
+          {
+            match?.danger ||
+            "HIGH"
+          }
+        </p>
+
+        <p>
+          Round:
+          {" "}
+          {round}
+        </p>
+
+        <p>
+          Survivors:
+          {" "}
+          {alive}
+        </p>
+
       </div>
 
+      {/* STARTING */}
+
       {starting && (
+
         <div className="card">
-          <h3>Arena Opening...</h3>
-          <p>Survivors are entering the district.</p>
+
+          <h3>
+            Arena Opening...
+          </h3>
+
+          <p>
+            Survivors are entering
+            the district.
+          </p>
+
         </div>
+
       )}
+
+      {/* ERROR */}
 
       {error && (
-        <div className="card">{error}</div>
+
+        <div className="card">
+
+          {error}
+
+        </div>
+
       )}
 
+      {/* FEED */}
+
       <div>
-        {feed.map((item, index) => (
-          <div key={index} className="feed-item">
-            {item.message}
-          </div>
-        ))}
+
+        {feed.map(
+          (
+            item,
+            index
+          ) => (
+
+            <div
+              key={index}
+              className="feed-item"
+            >
+
+              {item.message}
+
+            </div>
+          )
+        )}
+
       </div>
 
     </div>
