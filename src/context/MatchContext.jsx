@@ -1,6 +1,7 @@
 import {
   createContext,
   useContext,
+  useEffect,
   useState
 } from "react";
 
@@ -11,32 +12,152 @@ export const MatchProvider = ({
   children
 }) => {
 
+  /*
+  =========================
+  LOAD SAVED DATA
+  =========================
+  */
+
+  const savedMatch =
+    localStorage.getItem(
+      "outlast_match"
+    );
+
+  const savedFeed =
+    localStorage.getItem(
+      "outlast_feed"
+    );
+
+  const savedResults =
+    localStorage.getItem(
+      "outlast_results"
+    );
+
+  /*
+  =========================
+  STATES
+  =========================
+  */
+
   const [match, setMatch] =
-    useState(null);
+    useState(
+      savedMatch
+        ? JSON.parse(savedMatch)
+        : null
+    );
 
   const [feed, setFeed] =
-    useState([]);
+    useState(
+      savedFeed
+        ? JSON.parse(savedFeed)
+        : []
+    );
 
   const [results, setResults] =
-    useState(null);
+    useState(
+      savedResults
+        ? JSON.parse(savedResults)
+        : null
+    );
 
   const [loading, setLoading] =
     useState(false);
 
+  /*
+  =========================
+  SAVE MATCH
+  =========================
+  */
+
+  useEffect(() => {
+
+    localStorage.setItem(
+      "outlast_match",
+      JSON.stringify(match)
+    );
+
+  }, [match]);
+
+  /*
+  =========================
+  SAVE FEED
+  =========================
+  */
+
+  useEffect(() => {
+
+    localStorage.setItem(
+      "outlast_feed",
+      JSON.stringify(feed)
+    );
+
+  }, [feed]);
+
+  /*
+  =========================
+  SAVE RESULTS
+  =========================
+  */
+
+  useEffect(() => {
+
+    localStorage.setItem(
+      "outlast_results",
+      JSON.stringify(results)
+    );
+
+  }, [results]);
+
+  /*
+  =========================
+  CLEAR MATCH
+  =========================
+  */
+
+  const clearMatch = () => {
+
+    setMatch(null);
+
+    setFeed([]);
+
+    setResults(null);
+
+    localStorage.removeItem(
+      "outlast_match"
+    );
+
+    localStorage.removeItem(
+      "outlast_feed"
+    );
+
+    localStorage.removeItem(
+      "outlast_results"
+    );
+  };
+
   return (
+
     <MatchContext.Provider
       value={{
+
         match,
         setMatch,
+
         feed,
         setFeed,
+
         results,
         setResults,
+
         loading,
-        setLoading
+        setLoading,
+
+        clearMatch
       }}
     >
+
       {children}
+
     </MatchContext.Provider>
   );
 };
