@@ -20,7 +20,8 @@ export default function Results() {
     useNavigate();
 
   const {
-    results
+    results,
+    clearMatch
   } = useMatch();
 
   const {
@@ -45,68 +46,206 @@ export default function Results() {
 
   }, []);
 
+  /*
+  =====================================
+  PLAY AGAIN
+  =====================================
+  */
+
+  const handlePlayAgain =
+    () => {
+
+      clearMatch();
+
+      navigate("/", {
+        replace: true
+      });
+    };
+
   return (
 
-    <div className="app-container">
+    <div className="page">
 
-      <h1 className="title">
-        RESULTS
-      </h1>
+      {/* HEADER */}
+
+      <div
+        style={{
+          marginBottom: 24
+        }}
+      >
+
+        <div
+          className="game-title"
+          style={{
+            fontSize: 32
+          }}
+        >
+
+          RESULTS
+
+        </div>
+
+        <div
+          style={{
+            color:
+              "var(--text3)",
+            marginTop: 6,
+            fontSize: 13
+          }}
+        >
+
+          District cleared
+
+        </div>
+
+      </div>
+
+      {/* RESULTS */}
 
       {
         results?.results?.map(
           (
             player,
             index
-          ) => (
+          ) => {
 
-            <div
-              className="card"
-              key={index}
-            >
+            const top3 =
+              player.placement <= 3;
 
-              <h3>
+            return (
 
-                #
-                {player.placement}
-                {" "}
-                @{player.username}
+              <div
+                className="card"
+                key={index}
+                style={{
+                  border:
+                    top3
+                      ? "1px solid rgba(234,179,8,0.3)"
+                      : "1px solid var(--border)",
 
-              </h3>
+                  background:
+                    top3
+                      ? "linear-gradient(135deg, rgba(234,179,8,0.08), rgba(234,179,8,0.03))"
+                      : "var(--surface)"
+                }}
+              >
 
-              <p>
-                Gold:
-                {" "}
+                {/* PLAYER */}
 
-                <span className="gold">
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent:
+                      "space-between",
+                    alignItems:
+                      "center"
+                  }}
+                >
 
-                  +
-                  {player.goldEarned}
+                  <div>
 
-                </span>
+                    <div
+                      style={{
+                        fontWeight: 800,
+                        fontSize: 18
+                      }}
+                    >
 
-              </p>
+                      #{player.placement}
+                      {" "}
+                      @{player.username}
 
-              <p>
-                XP:
-                {" "}
-                +
-                {player.xpEarned}
-              </p>
+                    </div>
 
-            </div>
-          )
+                    <div
+                      style={{
+                        color:
+                          "var(--text3)",
+                        fontSize: 12,
+                        marginTop: 4
+                      }}
+                    >
+
+                      Survivor Ranking
+
+                    </div>
+
+                  </div>
+
+                  <div
+                    style={{
+                      textAlign:
+                        "right"
+                    }}
+                  >
+
+                    <div
+                      style={{
+                        color:
+                          "var(--gold)",
+                        fontWeight: 800,
+                        fontSize: 18
+                      }}
+                    >
+
+                      +{player.goldEarned}
+
+                    </div>
+
+                    <div
+                      style={{
+                        color:
+                          "var(--purple)",
+                        fontWeight: 700,
+                        marginTop: 4,
+                        fontSize: 14
+                      }}
+                    >
+
+                      +{player.xpEarned} XP
+
+                    </div>
+
+                  </div>
+
+                </div>
+
+              </div>
+            );
+          }
         )
       }
 
+      {/* ACTIONS */}
+
       <button
-        className="primary-btn"
+        className="btn-primary"
+        onClick={
+          handlePlayAgain
+        }
+        style={{
+          marginTop: 10,
+          marginBottom: 10
+        }}
+      >
+
+        ⚡ PLAY AGAIN
+
+      </button>
+
+      <button
+        className="btn-secondary"
         onClick={() =>
-          navigate("/")
+          navigate(
+            "/leaderboard",
+            {
+              replace: true
+            }
+          )
         }
       >
 
-        PLAY AGAIN
+        VIEW LEADERBOARD
 
       </button>
 
