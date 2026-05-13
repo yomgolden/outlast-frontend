@@ -101,6 +101,17 @@ export const UserProvider = ({
     const bootstrap =
       async () => {
 
+        /*
+        =================================
+        TEMP RESET OLD GUEST CACHE
+        REMOVE THIS LATER
+        =================================
+        */
+
+        localStorage.removeItem(
+          "outlast_user"
+        );
+
         try {
 
           /*
