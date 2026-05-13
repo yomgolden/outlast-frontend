@@ -25,14 +25,25 @@ export default function History() {
 
   useEffect(() => {
 
-    const saved =
-      JSON.parse(
-        localStorage.getItem(
-          "outlast_history"
-        ) || "[]"
-      );
+    try {
 
-    setMatches(saved);
+      const saved =
+        JSON.parse(
+          localStorage.getItem(
+            "outlast_history"
+          ) || "[]"
+        );
+
+      // Keep latest 20 only
+      const limited =
+        saved.slice(0, 20);
+
+      setMatches(limited);
+
+    } catch {
+
+      setMatches([]);
+    }
 
   }, []);
 
@@ -52,6 +63,20 @@ export default function History() {
       setMatches([]);
     };
 
+  /*
+  =====================================
+  OPEN REPLAY
+  =====================================
+  */
+
+  const openReplay =
+    (index) => {
+
+      navigate(
+        `/history/${index}`
+      );
+    };
+
   return (
 
     <div className="page">
@@ -69,14 +94,31 @@ export default function History() {
         }}
       >
 
-        <div
-          className="game-title"
-          style={{
-            fontSize: 34
-          }}
-        >
+        <div>
 
-          HISTORY
+          <div
+            className="game-title"
+            style={{
+              fontSize: 34
+            }}
+          >
+
+            HISTORY
+
+          </div>
+
+          <div
+            style={{
+              color:
+                "var(--text3)",
+              fontSize: 12,
+              marginTop: 4
+            }}
+          >
+
+            Last 20 completed arenas
+
+          </div>
 
         </div>
 
@@ -104,14 +146,37 @@ export default function History() {
 
       </div>
 
-      {/* EMPTY */}
+      {/* EMPTY STATE */}
 
       {
         matches.length === 0 && (
 
-          <div className="card">
+          <div
+            className="card"
+            style={{
+              textAlign:
+                "center",
+              padding:
+                "36px 20px"
+            }}
+          >
 
-            <h3>
+            <div
+              style={{
+                fontSize: 42,
+                marginBottom: 14
+              }}
+            >
+
+              📜
+
+            </div>
+
+            <h3
+              style={{
+                marginBottom: 10
+              }}
+            >
 
               No Match History
 
@@ -119,14 +184,16 @@ export default function History() {
 
             <p
               style={{
-                marginTop: 10,
                 color:
-                  "var(--text2)"
+                  "var(--text2)",
+                lineHeight: 1.6,
+                fontSize: 14
               }}
             >
 
               Completed matches
-              will appear here.
+              will appear here
+              after every arena.
 
             </p>
 
@@ -134,7 +201,7 @@ export default function History() {
         )
       }
 
-      {/* HISTORY LIST */}
+      {/* MATCH LIST */}
 
       {
         matches.map(
@@ -147,17 +214,42 @@ export default function History() {
               key={index}
               className="card"
               onClick={() =>
-                navigate(
-                  `/history/${index}`
-                )
+                openReplay(index)
               }
               style={{
                 marginBottom: 16,
                 cursor: "pointer",
                 transition:
-                  "0.2s"
+                  "0.2s",
+                position:
+                  "relative",
+                overflow:
+                  "hidden"
               }}
             >
+
+              {/* BG GLOW */}
+
+              <div
+                style={{
+                  position:
+                    "absolute",
+                  right: -20,
+                  top: -20,
+                  width: 120,
+                  height: 120,
+                  borderRadius:
+                    "50%",
+                  background:
+                    match.danger ===
+                    "EXTREME"
+                      ? "rgba(239,68,68,0.08)"
+                      : match.danger ===
+                        "HIGH"
+                      ? "rgba(249,115,22,0.06)"
+                      : "rgba(234,179,8,0.05)"
+                }}
+              />
 
               {/* TOP */}
 
@@ -167,8 +259,11 @@ export default function History() {
                   justifyContent:
                     "space-between",
                   alignItems:
-                    "center",
-                  gap: 10
+                    "flex-start",
+                  gap: 10,
+                  position:
+                    "relative",
+                  zIndex: 1
                 }}
               >
 
@@ -176,7 +271,8 @@ export default function History() {
 
                   <h3
                     style={{
-                      marginBottom: 6
+                      marginBottom: 6,
+                      fontSize: 20
                     }}
                   >
 
@@ -198,7 +294,17 @@ export default function History() {
 
                 </div>
 
-                <span className="badge badge-red">
+                <span
+                  className={
+                    match.danger ===
+                    "EXTREME"
+                      ? "badge badge-red"
+                      : match.danger ===
+                        "HIGH"
+                      ? "badge badge-orange"
+                      : "badge badge-gold"
+                  }
+                >
 
                   {match.danger}
 
@@ -225,9 +331,11 @@ export default function History() {
                   display: "grid",
                   gridTemplateColumns:
                     "1fr 1fr",
-                  gap: 12
+                  gap: 14
                 }}
               >
+
+                {/* WINNER */}
 
                 <div>
 
@@ -256,6 +364,8 @@ export default function History() {
 
                 </div>
 
+                {/* PLAYERS */}
+
                 <div>
 
                   <div
@@ -267,7 +377,7 @@ export default function History() {
                     }}
                   >
 
-                    SURVIVORS
+                    PLAYERS
 
                   </div>
 
@@ -282,6 +392,8 @@ export default function History() {
                   </div>
 
                 </div>
+
+                {/* ROUNDS */}
 
                 <div>
 
@@ -310,6 +422,8 @@ export default function History() {
 
                 </div>
 
+                {/* DATE */}
+
                 <div>
 
                   <div
@@ -328,7 +442,8 @@ export default function History() {
                   <div
                     style={{
                       fontWeight: 700,
-                      fontSize: 13
+                      fontSize: 13,
+                      lineHeight: 1.4
                     }}
                   >
 
@@ -340,7 +455,7 @@ export default function History() {
 
               </div>
 
-              {/* REPLAY */}
+              {/* FOOTER */}
 
               <div
                 style={{
