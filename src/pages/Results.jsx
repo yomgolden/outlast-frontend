@@ -48,6 +48,21 @@ export default function Results() {
 
   /*
   =====================================
+  CLEAR MATCH WHEN LEAVING
+  =====================================
+  */
+
+  useEffect(() => {
+
+    return () => {
+
+      clearMatch();
+    };
+
+  }, []);
+
+  /*
+  =====================================
   PLAY AGAIN
   =====================================
   */
@@ -61,6 +76,31 @@ export default function Results() {
         replace: true
       });
     };
+
+  /*
+  =====================================
+  RESULTS FILTERING
+  =====================================
+  */
+
+  const allResults =
+    results?.results || [];
+
+  // TOP 3 ONLY
+  const topThree =
+    allResults.slice(0, 3);
+
+  // CURRENT PLAYER RESULT
+  const myResult =
+    allResults.find(
+      (player) =>
+        player.userId === user?._id
+    );
+
+  // SHOW PERSONAL RESULT
+  const showMyPlacement =
+    myResult &&
+    myResult.placement > 3;
 
   return (
 
@@ -100,17 +140,39 @@ export default function Results() {
 
       </div>
 
-      {/* RESULTS */}
+      {/* TOP 3 */}
+
+      <div
+        className="section-title"
+        style={{
+          marginBottom: 12
+        }}
+      >
+
+        Top Survivors
+
+      </div>
 
       {
-        results?.results?.map(
+        topThree.map(
           (
             player,
             index
           ) => {
 
-            const top3 =
-              player.placement <= 3;
+            const rankStyle =
+              player.placement === 1
+                ? "rgba(234,179,8,0.12)"
+                : player.placement === 2
+                ? "rgba(148,163,184,0.10)"
+                : "rgba(249,115,22,0.10)";
+
+            const borderStyle =
+              player.placement === 1
+                ? "rgba(234,179,8,0.35)"
+                : player.placement === 2
+                ? "rgba(148,163,184,0.30)"
+                : "rgba(249,115,22,0.30)";
 
             return (
 
@@ -119,18 +181,12 @@ export default function Results() {
                 key={index}
                 style={{
                   border:
-                    top3
-                      ? "1px solid rgba(234,179,8,0.3)"
-                      : "1px solid var(--border)",
+                    `1px solid ${borderStyle}`,
 
                   background:
-                    top3
-                      ? "linear-gradient(135deg, rgba(234,179,8,0.08), rgba(234,179,8,0.03))"
-                      : "var(--surface)"
+                    `linear-gradient(135deg, ${rankStyle}, rgba(0,0,0,0.02))`
                 }}
               >
-
-                {/* PLAYER */}
 
                 <div
                   style={{
@@ -151,8 +207,16 @@ export default function Results() {
                       }}
                     >
 
-                      #{player.placement}
+                      {
+                        player.placement === 1
+                          ? "🥇"
+                          : player.placement === 2
+                          ? "🥈"
+                          : "🥉"
+                      }
+
                       {" "}
+
                       @{player.username}
 
                     </div>
@@ -166,7 +230,8 @@ export default function Results() {
                       }}
                     >
 
-                      Survivor Ranking
+                      Placement #
+                      {player.placement}
 
                     </div>
 
@@ -216,6 +281,123 @@ export default function Results() {
         )
       }
 
+      {/* YOUR PLACEMENT */}
+
+      {
+        showMyPlacement && (
+
+          <>
+
+            <div
+              className="section-title"
+              style={{
+                marginTop: 24,
+                marginBottom: 12
+              }}
+            >
+
+              Your Placement
+
+            </div>
+
+            <div
+              className="card"
+              style={{
+                border:
+                  "1px solid rgba(99,102,241,0.30)",
+
+                background:
+                  "linear-gradient(135deg, rgba(99,102,241,0.10), rgba(99,102,241,0.03))"
+              }}
+            >
+
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent:
+                    "space-between",
+                  alignItems:
+                    "center"
+                }}
+              >
+
+                <div>
+
+                  <div
+                    style={{
+                      fontWeight: 800,
+                      fontSize: 18
+                    }}
+                  >
+
+                    #
+                    {myResult.placement}
+
+                    {" "}
+
+                    @{myResult.username}
+
+                  </div>
+
+                  <div
+                    style={{
+                      color:
+                        "var(--text3)",
+                      fontSize: 12,
+                      marginTop: 4
+                    }}
+                  >
+
+                    Survivor Ranking
+
+                  </div>
+
+                </div>
+
+                <div
+                  style={{
+                    textAlign:
+                      "right"
+                  }}
+                >
+
+                  <div
+                    style={{
+                      color:
+                        "var(--gold)",
+                      fontWeight: 800,
+                      fontSize: 18
+                    }}
+                  >
+
+                    +{myResult.goldEarned}
+
+                  </div>
+
+                  <div
+                    style={{
+                      color:
+                        "var(--purple)",
+                      fontWeight: 700,
+                      marginTop: 4,
+                      fontSize: 14
+                    }}
+                  >
+
+                    +{myResult.xpEarned} XP
+
+                  </div>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </>
+        )
+      }
+
       {/* ACTIONS */}
 
       <button
@@ -224,7 +406,7 @@ export default function Results() {
           handlePlayAgain
         }
         style={{
-          marginTop: 10,
+          marginTop: 16,
           marginBottom: 10
         }}
       >
@@ -235,14 +417,17 @@ export default function Results() {
 
       <button
         className="btn-secondary"
-        onClick={() =>
+        onClick={() => {
+
+          clearMatch();
+
           navigate(
             "/leaderboard",
             {
               replace: true
             }
-          )
-        }
+          );
+        }}
       >
 
         VIEW LEADERBOARD
