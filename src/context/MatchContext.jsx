@@ -71,10 +71,19 @@ export const MatchProvider = ({
 
   useEffect(() => {
 
-    localStorage.setItem(
-      "outlast_match",
-      JSON.stringify(match)
-    );
+    if (match) {
+
+      localStorage.setItem(
+        "outlast_match",
+        JSON.stringify(match)
+      );
+
+    } else {
+
+      localStorage.removeItem(
+        "outlast_match"
+      );
+    }
 
   }, [match]);
 
@@ -86,10 +95,22 @@ export const MatchProvider = ({
 
   useEffect(() => {
 
-    localStorage.setItem(
-      "outlast_feed",
-      JSON.stringify(feed)
-    );
+    if (
+      feed &&
+      feed.length > 0
+    ) {
+
+      localStorage.setItem(
+        "outlast_feed",
+        JSON.stringify(feed)
+      );
+
+    } else {
+
+      localStorage.removeItem(
+        "outlast_feed"
+      );
+    }
 
   }, [feed]);
 
@@ -101,10 +122,19 @@ export const MatchProvider = ({
 
   useEffect(() => {
 
-    localStorage.setItem(
-      "outlast_results",
-      JSON.stringify(results)
-    );
+    if (results) {
+
+      localStorage.setItem(
+        "outlast_results",
+        JSON.stringify(results)
+      );
+
+    } else {
+
+      localStorage.removeItem(
+        "outlast_results"
+      );
+    }
 
   }, [results]);
 
