@@ -87,7 +87,7 @@ function FeedItem({ item }) {
 
   /*
   ===================================
-  FEED FORMATTER
+  FORMAT MESSAGE
   ===================================
   */
 
@@ -408,7 +408,7 @@ export default function Match() {
 
           /*
           ===================================
-          EVENT DELETED
+          EVENT REMOVED
           ===================================
           */
 
@@ -428,13 +428,25 @@ export default function Match() {
 
           /*
           ===================================
-          MATCH FINISHED
+          REPLAY STATUS
+          ===================================
+          */
+
+          const replaySeen =
+            localStorage.getItem(
+              `match_seen_${match.eventId}`
+            );
+
+          /*
+          ===================================
+          SKIP REPLAY
           ===================================
           */
 
           if (
             data.status === "ENDED" &&
-            data.finalResults
+            data.finalResults &&
+            replaySeen
           ) {
 
             setResults({
@@ -454,20 +466,20 @@ export default function Match() {
 
           /*
           ===================================
-          START MATCH
+          START FEED
           ===================================
           */
 
           setStarting(false);
+
+          let currentFeed =
+            [];
 
           /*
           ===================================
           STREAM FEED
           ===================================
           */
-
-          let currentFeed =
-            [];
 
           for (
             let i = 0;
@@ -536,7 +548,7 @@ export default function Match() {
 
           /*
           ===================================
-          RESULTS
+          SAVE RESULTS
           ===================================
           */
 
@@ -547,7 +559,18 @@ export default function Match() {
 
           /*
           ===================================
-          COMPLETE
+          MARK REPLAY AS WATCHED
+          ===================================
+          */
+
+          localStorage.setItem(
+            `match_seen_${match.eventId}`,
+            "true"
+          );
+
+          /*
+          ===================================
+          MATCH COMPLETE
           ===================================
           */
 
@@ -588,7 +611,7 @@ export default function Match() {
 
   /*
   ===================================
-  UI
+  PAGE
   ===================================
   */
 
