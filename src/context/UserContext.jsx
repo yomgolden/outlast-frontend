@@ -105,6 +105,22 @@ export const UserProvider = ({
 
           /*
           ==============================
+          TELEGRAM WEBAPP
+          ==============================
+          */
+
+          const tg =
+            window.Telegram?.WebApp;
+
+          tg?.expand?.();
+
+          tg?.ready?.();
+
+          const telegramUser =
+            tg?.initDataUnsafe?.user;
+
+          /*
+          ==============================
           CHECK SAVED USER
           ==============================
           */
@@ -119,39 +135,44 @@ export const UserProvider = ({
             const parsed =
               JSON.parse(cached);
 
-            setUser(parsed);
+            /*
+            ==========================
+            IGNORE OLD GUEST USERS
+            ==========================
+            */
 
-            // Refresh latest backend data
-            await loadUser(
-              parsed._id
+            const isGuest =
+              parsed?.telegramId?.startsWith(
+                "guest_"
+              );
+
+            if (!isGuest) {
+
+              setUser(parsed);
+
+              await loadUser(
+                parsed._id
+              );
+
+              setLoading(false);
+
+              return;
+            }
+
+            /*
+            ==========================
+            REMOVE OLD GUEST CACHE
+            ==========================
+            */
+
+            localStorage.removeItem(
+              "outlast_user"
             );
-
-            setLoading(false);
-
-            return;
           }
 
           /*
           ==============================
-          TELEGRAM WEBAPP
-          ==============================
-          */
-
-          const tg =
-            window.Telegram?.WebApp;
-
-          // Expand telegram app
-          tg?.expand?.();
-
-          // Ready state
-          tg?.ready?.();
-
-          const telegramUser =
-            tg?.initDataUnsafe?.user;
-
-          /*
-          ==============================
-          FALLBACK GUEST
+          TELEGRAM PAYLOAD
           ==============================
           */
 
@@ -186,6 +207,11 @@ export const UserProvider = ({
 
               null
           };
+
+          console.log(
+            "TELEGRAM USER:",
+            payload
+          );
 
           /*
           ==============================
