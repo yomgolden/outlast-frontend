@@ -87,12 +87,12 @@ function FeedItem({ item }) {
 
   /*
   ===================================
-  FEED TEXT FORMATTER
+  FEED FORMATTER
   ===================================
   */
 
   const formatMessage =
-    message => {
+    (message) => {
 
       if (!message)
         return "";
@@ -171,14 +171,14 @@ function FeedItem({ item }) {
 
       /*
       ===================================
-      LOCATION WORDS
+      LOCATIONS
       ===================================
       */
 
       formatted =
         formatted.replace(
 
-          /\b(Ibadan|Makoko|Yaba|Aba|Lekki|Ajegunle|Surulere|Ikorodu)\b/gi,
+          /\b(Ibadan|Makoko|Yaba|Aba|Lekki|Ajegunle|Surulere|Ikorodu|Mushin)\b/gi,
 
           `
           <span
@@ -281,6 +281,12 @@ function FeedItem({ item }) {
   );
 }
 
+/*
+===================================
+MATCH PAGE
+===================================
+*/
+
 export default function Match() {
 
   const navigate =
@@ -355,7 +361,7 @@ export default function Match() {
 
     /*
     ===================================
-    NO EVENT
+    NO MATCH
     ===================================
     */
 
@@ -370,7 +376,7 @@ export default function Match() {
 
     /*
     ===================================
-    PREVENT DOUBLE START
+    PREVENT DOUBLE LOAD
     ===================================
     */
 
@@ -391,7 +397,7 @@ export default function Match() {
 
           /*
           ===================================
-          GET FULL FEED
+          FETCH EVENT
           ===================================
           */
 
@@ -399,6 +405,58 @@ export default function Match() {
             await getEventFeed(
               match.eventId
             );
+
+          /*
+          ===================================
+          EVENT DELETED
+          ===================================
+          */
+
+          if (
+            !data ||
+            data.error
+          ) {
+
+            clearMatch();
+
+            navigate("/", {
+              replace: true
+            });
+
+            return;
+          }
+
+          /*
+          ===================================
+          MATCH FINISHED
+          ===================================
+          */
+
+          if (
+            data.status === "ENDED" &&
+            data.finalResults
+          ) {
+
+            setResults({
+              results:
+                data.finalResults
+            });
+
+            navigate(
+              "/results",
+              {
+                replace: true
+              }
+            );
+
+            return;
+          }
+
+          /*
+          ===================================
+          START MATCH
+          ===================================
+          */
 
           setStarting(false);
 
@@ -489,63 +547,6 @@ export default function Match() {
 
           /*
           ===================================
-          SAVE HISTORY
-          ===================================
-          */
-
-          const history =
-            JSON.parse(
-              localStorage.getItem(
-                "outlast_history"
-              ) || "[]"
-            );
-
-          history.unshift({
-
-            theme:
-              match?.theme,
-
-            location:
-              match?.location,
-
-            danger:
-              match?.danger,
-
-            winner:
-              data.finalResults?.[0]
-                ?.username ||
-              "Unknown",
-
-            totalPlayers:
-              data.finalResults
-                ?.length || 0,
-
-            rounds:
-              round,
-
-            date:
-              new Date()
-                .toLocaleString(),
-
-            feed:
-              data.feed || [],
-
-            results:
-              data.finalResults || []
-
-          });
-
-          localStorage.setItem(
-
-            "outlast_history",
-
-            JSON.stringify(
-              history.slice(0, 20)
-            )
-          );
-
-          /*
-          ===================================
           COMPLETE
           ===================================
           */
@@ -555,18 +556,41 @@ export default function Match() {
         } catch (err) {
 
           console.error(
+            "MATCH LOAD ERROR:",
             err
           );
 
           setError(
             "Failed to load match"
           );
+
+          /*
+          ===================================
+          AUTO RETURN HOME
+          ===================================
+          */
+
+          setTimeout(() => {
+
+            clearMatch();
+
+            navigate("/", {
+              replace: true
+            });
+
+          }, 2000);
         }
       };
 
     loadMatch();
 
   }, []);
+
+  /*
+  ===================================
+  UI
+  ===================================
+  */
 
   return (
 
