@@ -1,9 +1,7 @@
-import axios from "axios";
+ import axios from "axios";
 
 const api = axios.create({
-  baseURL:
-    import.meta.env.VITE_API_URL,
-
+  baseURL: import.meta.env.VITE_API_URL,
   timeout: 60000
 });
 
@@ -15,15 +13,14 @@ ERROR HANDLER
 
 api.interceptors.response.use(
 
-  response => response,
+  (response) => response,
 
-  error => {
+  (error) => {
 
     if (!error.response) {
 
       return Promise.reject({
-        message:
-          "Network error"
+        message: "Network error"
       });
     }
 
@@ -85,10 +82,22 @@ export const getEvents =
     return res.data;
   };
 
+export const getFeaturedEvents =
+  async () => {
+
+    const res =
+      await api.get(
+        "/events/featured"
+      );
+
+    return res.data;
+  };
+
 export const createEvent =
   async (
     userId,
-    username
+    username,
+    eventType
   ) => {
 
     const res =
@@ -96,7 +105,8 @@ export const createEvent =
         "/events/create",
         {
           userId,
-          username
+          username,
+          eventType
         }
       );
 
