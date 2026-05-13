@@ -63,7 +63,7 @@ export default function Home() {
     if (featured.length < 2) return;
     autoSlideRef.current = setInterval(() => {
       setActiveSlide(prev => (prev + 1) % featured.length);
-    }, 3000);
+    }, 5000);
     return () => clearInterval(autoSlideRef.current);
   }, [featured.length]);
 
