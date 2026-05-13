@@ -48,16 +48,102 @@ export default function Results() {
 
   /*
   =====================================
-  CLEAR MATCH WHEN LEAVING
+  SAVE MATCH HISTORY
   =====================================
   */
 
   useEffect(() => {
 
-    return () => {
+    if (
+      !results?.results?.length
+    ) return;
 
-      clearMatch();
-    };
+    try {
+
+      const existing =
+        JSON.parse(
+          localStorage.getItem(
+            "outlast_history"
+          ) || "[]"
+        );
+
+      const historyMatch = {
+
+        theme:
+          results.theme,
+
+        location:
+          results.location,
+
+        danger:
+          results.danger,
+
+        winner:
+          results.results[0]
+            ?.username || "Unknown",
+
+        totalPlayers:
+          results.results.length,
+
+        rounds:
+          results.feed?.filter(
+            item =>
+              item.type ===
+              "ROUND_START"
+          ).length || 0,
+
+        date:
+          new Date()
+            .toLocaleString(),
+
+        results:
+          results.results,
+
+        feed:
+          results.feed
+      };
+
+      /*
+      =====================================
+      PREVENT DUPLICATE SAVES
+      =====================================
+      */
+
+      const alreadyExists =
+        existing.find(
+          match =>
+            match.date ===
+            historyMatch.date
+        );
+
+      if (alreadyExists) return;
+
+      /*
+      =====================================
+      KEEP ONLY LATEST 20
+      =====================================
+      */
+
+      const updated = [
+        historyMatch,
+        ...existing
+      ];
+
+      const limited =
+        updated.slice(0, 20);
+
+      localStorage.setItem(
+        "outlast_history",
+        JSON.stringify(limited)
+      );
+
+    } catch (err) {
+
+      console.error(
+        "HISTORY SAVE ERROR:",
+        err
+      );
+    }
 
   }, []);
 
@@ -79,6 +165,41 @@ export default function Results() {
 
   /*
   =====================================
+  RETURN HOME
+  =====================================
+  */
+
+  const handleHome =
+    () => {
+
+      clearMatch();
+
+      navigate("/", {
+        replace: true
+      });
+    };
+
+  /*
+  =====================================
+  VIEW LEADERBOARD
+  =====================================
+  */
+
+  const handleLeaderboard =
+    () => {
+
+      clearMatch();
+
+      navigate(
+        "/leaderboard",
+        {
+          replace: true
+        }
+      );
+    };
+
+  /*
+  =====================================
   RESULTS FILTERING
   =====================================
   */
@@ -86,18 +207,34 @@ export default function Results() {
   const allResults =
     results?.results || [];
 
-  // TOP 3 ONLY
+  /*
+  =====================================
+  TOP 3
+  =====================================
+  */
+
   const topThree =
     allResults.slice(0, 3);
 
-  // CURRENT PLAYER RESULT
+  /*
+  =====================================
+  PLAYER RESULT
+  =====================================
+  */
+
   const myResult =
     allResults.find(
-      (player) =>
-        player.userId === user?._id
+      player =>
+        player.userId ===
+        user?._id
     );
 
-  // SHOW PERSONAL RESULT
+  /*
+  =====================================
+  SHOW EXTRA CARD
+  =====================================
+  */
+
   const showMyPlacement =
     myResult &&
     myResult.placement > 3;
@@ -417,20 +554,26 @@ export default function Results() {
 
       <button
         className="btn-secondary"
-        onClick={() => {
-
-          clearMatch();
-
-          navigate(
-            "/leaderboard",
-            {
-              replace: true
-            }
-          );
+        onClick={
+          handleLeaderboard
+        }
+        style={{
+          marginBottom: 10
         }}
       >
 
         VIEW LEADERBOARD
+
+      </button>
+
+      <button
+        className="btn-secondary"
+        onClick={
+          handleHome
+        }
+      >
+
+        RETURN HOME
 
       </button>
 
