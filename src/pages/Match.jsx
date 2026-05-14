@@ -362,42 +362,63 @@ export default function Match() {
           }
 
           // MATCH END
-          if (round.type === "MATCH_END") {
+if (round.type === "MATCH_END") {
 
-            // SAVE HISTORY
-            const history = JSON.parse(
-              localStorage.getItem("outlast_history") || "[]"
-            );
+  // SAVE HISTORY
+  console.log(
+    "SAVING STORY ROUNDS:",
+    [
+      ...visibleRounds,
+      round
+    ]
+  );
 
-            history.unshift({
-              theme: match?.theme,
-              location: match?.location,
-              danger: match?.danger,
-              winner: data.finalResults?.[0]?.username || "Unknown",
-              totalPlayers: data.finalResults?.length || 0,
-              date: new Date().toLocaleString(),
-              storyRounds: data.storyRounds || [],
-              results: data.finalResults || []
-            });
+  const history = JSON.parse(
+    localStorage.getItem("outlast_history") || "[]"
+  );
 
-            localStorage.setItem(
-              "outlast_history",
-              JSON.stringify(history.slice(0, 20))
-            );
+  history.unshift({
+    theme: match?.theme,
+    location: match?.location,
+    danger: match?.danger,
 
-            setResults({
-              results: data.finalResults || []
-            });
+    winner:
+      data.finalResults?.[0]?.username ||
+      "Unknown",
 
-            setComplete(true);
+    totalPlayers:
+      data.finalResults?.length || 0,
 
-            localStorage.setItem(
-              `match_seen_${match.eventId}`,
-              "true"
-            );
+    date: new Date().toLocaleString(),
 
-            break;
-          }
+    // FIXED REPLAY SAVE
+    storyRounds: [
+      ...visibleRounds,
+      round
+    ],
+
+    results:
+      data.finalResults || []
+  });
+
+  localStorage.setItem(
+    "outlast_history",
+    JSON.stringify(history.slice(0, 20))
+  );
+
+  setResults({
+    results: data.finalResults || []
+  });
+
+  setComplete(true);
+
+  localStorage.setItem(
+    `match_seen_${match.eventId}`,
+    "true"
+  );
+
+  break;
+}
 
           await new Promise(
             r => setTimeout(r, ROUND_DELAY)
