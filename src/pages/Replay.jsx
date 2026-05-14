@@ -58,12 +58,18 @@ function RoundCard({ roundData }) {
         <span className="round-count">{roundData.aliveCount} remain</span>
       </div>
 
-      {/* 1st person narration — bold, dimmed */}
-      {roundData.narration && (
-        <div className="round-narration" style={{ fontWeight: 600 }}>
-          {roundData.narration}
-        </div>
-      )}
+      {/* 1st person narration — bold, warm faded tone */}
+{roundData.narration && (
+  <div
+    className="round-narration"
+    style={{
+      fontWeight: 600,
+      color: "rgba(220,210,190,0.72)"
+    }}
+  >
+    {roundData.narration}
+  </div>
+)}
 
       {/* Events */}
       <div className="feed-sequence">
