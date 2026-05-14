@@ -10,13 +10,29 @@ export default function History() {
   // LOAD HISTORY
   useEffect(() => {
 
-    const saved = JSON.parse(
-      localStorage.getItem("outlast_history") || "[]"
+  const saved = JSON.parse(
+    localStorage.getItem("outlast_history") || "[]"
+  );
+
+  // REMOVE OLD INVALID MATCHES
+  const valid = saved.filter(
+    match =>
+      match.storyRounds &&
+      match.storyRounds.length > 0
+  );
+
+  // UPDATE STORAGE
+  if (valid.length !== saved.length) {
+
+    localStorage.setItem(
+      "outlast_history",
+      JSON.stringify(valid)
     );
+  }
 
-    setHistory(saved);
+  setHistory(valid);
 
-  }, []);
+}, []);
 
   // CLEAR HISTORY
   const clearHistory = () => {
