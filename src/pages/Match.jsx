@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { getEventFeed } from "../api/api";
 import { useMatch } from "../context/MatchContext";
 
-const ROUND_DELAY = 5000;
+const ROUND_DELAY = 3000;
 
 const THEMES = {
   mushin_nightmare: {
