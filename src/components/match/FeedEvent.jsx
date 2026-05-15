@@ -79,7 +79,7 @@ export default function FeedEvent({ event }) {
       }}
     >
       <p className={`leading-7 ${styles.text}`}>
-        {event.text}
+        {event.message}
       </p>
     </div>
   );
