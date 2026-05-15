@@ -1,9 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap');
+
 /* ===================================
 MATCH STORY UI
-=================================== */
+=================================== /
 
-/* MATCH PAGE THEMES */
+/ MATCH PAGE THEMES /
 
 .match-page.theme-forest {
   --accent: #90d870;
@@ -25,16 +26,25 @@ MATCH STORY UI
   --accent-dim: rgba(180,40,30,0.12);
 }
 
-/* ROUND CARDS */
+/ ===================================
+CINEMATIC ROUND CARDS
+=================================== /
 
 .round-card {
 
-  background: rgba(10,20,8,0.55);
+  position: relative;
 
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255,255,255,0.035),
+      rgba(255,255,255,0.018)
+    );
 
-  border: 1px solid rgba(255,255,255,0.07);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+
+  border: 1px solid rgba(255,255,255,0.06);
 
   border-radius: 18px;
 
@@ -42,10 +52,72 @@ MATCH STORY UI
 
   overflow: hidden;
 
-  animation: cardReveal 0.5s ease forwards;
+  box-shadow:
+    0 10px 40px rgba(0,0,0,0.35),
+    inset 0 1px 0 rgba(255,255,255,0.03);
+
+  animation: cardReveal 0.55s ease forwards;
 
   opacity: 0;
-  transform: translateY(10px);
+  transform: translateY(12px);
+}
+
+/ glow orb /
+
+.round-card::before {
+
+  content: "";
+
+  position: absolute;
+
+  top: -80px;
+  right: -60px;
+
+  width: 180px;
+  height: 180px;
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(180,40,30,0.08) 0%,
+      transparent 70%
+    );
+
+  pointer-events: none;
+}
+
+/ border shine /
+
+.round-card::after {
+
+  content: "";
+
+  position: absolute;
+
+  inset: 0;
+
+  border-radius: 18px;
+
+  padding: 1px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08),
+      transparent 30%,
+      transparent 70%,
+      rgba(255,255,255,0.03)
+    );
+
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+
+  -webkit-mask-composite: xor;
+
+  pointer-events: none;
 }
 
 .round-card-intro {
@@ -68,17 +140,28 @@ MATCH STORY UI
 
 @keyframes cardReveal {
 
+  from {
+
+    opacity: 0;
+
+    transform: translateY(14px) scale(0.985);
+  }
+
   to {
 
     opacity: 1;
 
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
 }
 
+/ ===================================
+ROUND HEADER
+=================================== /
+
 .round-header {
 
-  padding: 12px 16px 10px;
+  padding: 14px 18px 12px;
 
   border-bottom: 1px solid rgba(255,255,255,0.05);
 
@@ -93,110 +176,159 @@ MATCH STORY UI
 
   font-family: 'Bebas Neue', sans-serif;
 
-  font-size: 16px;
+  font-size: 17px;
 
   letter-spacing: 3px;
 
-  color: rgba(200,190,160,0.45);
+  color: rgba(220,210,190,0.42);
 }
 
 .round-count {
 
   font-size: 11px;
 
-  color: rgba(180,170,150,0.3);
+  color: rgba(180,170,150,0.28);
 
   font-style: italic;
 }
+
+/ ===================================
+NARRATION
+=================================== /
 
 .round-narration {
 
-  padding: 12px 16px 8px;
+  position: relative;
 
-  font-size: 14px;
+  padding: 16px 18px 14px;
+
+  font-size: 16px;
+
+  font-weight: 600;
 
   font-style: italic;
 
-  color: rgba(200,190,160,0.48);
+  color: rgba(255,255,255,0.68);
 
-  line-height: 1.7;
+  line-height: 1.75;
 
-  border-bottom: 1px solid rgba(255,255,255,0.04);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+
+  text-shadow:
+    0 0 12px rgba(255,255,255,0.02);
 }
+
+/ ===================================
+EVENTS
+=================================== /
 
 .feed-sequence {
 
-  padding: 10px 16px 12px;
+  padding: 14px 18px 16px;
 
   display: flex;
 
   flex-direction: column;
 
-  gap: 10px;
+  gap: 14px;
 }
 
-.feed-kill {
+.feed-kill,
+.feed-funny,
+.feed-survival {
+
+  position: relative;
 
   display: flex;
 
-  gap: 9px;
+  gap: 10px;
 
   align-items: flex-start;
 
   font-size: 15px;
 
-  line-height: 1.65;
+  line-height: 1.75;
+
+  animation: fadeEvent 0.5s ease forwards;
+
+  opacity: 0;
+  transform: translateY(4px);
+}
+
+/ stagger /
+
+.feed-kill:nth-child(1),
+.feed-funny:nth-child(1),
+.feed-survival:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.feed-kill:nth-child(2),
+.feed-funny:nth-child(2),
+.feed-survival:nth-child(2) {
+  animation-delay: 0.25s;
+}
+
+.feed-kill:nth-child(3),
+.feed-funny:nth-child(3),
+.feed-survival:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+.feed-kill:nth-child(4),
+.feed-funny:nth-child(4),
+.feed-survival:nth-child(4) {
+  animation-delay: 0.55s;
+}
+
+@keyframes fadeEvent {
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.feed-kill {
 
   color: rgba(230,210,195,0.88);
 }
 
 .feed-funny {
 
-  display: flex;
-
-  gap: 9px;
-
-  align-items: flex-start;
-
-  font-size: 15px;
-
-  line-height: 1.65;
-
-  color: rgba(225,205,140,0.82);
+  color: rgba(255,230,180,0.78);
 }
 
 .feed-survival {
 
-  display: flex;
-
-  gap: 9px;
-
-  align-items: flex-start;
-
-  font-size: 15px;
-
-  line-height: 1.65;
-
-  color: rgba(160,220,155,0.82);
+  color: rgba(180,240,180,0.82);
 }
+
+/ ===================================
+WORLD EVENTS
+=================================== /
 
 .feed-world {
 
+  position: relative;
+
   display: flex;
 
-  gap: 8px;
+  gap: 10px;
 
   align-items: flex-start;
 
+  padding-left: 2px;
+
   font-size: 13px;
 
-  line-height: 1.6;
+  line-height: 1.75;
 
-  color: rgba(180,200,170,0.45);
+  color: rgba(255,255,255,0.36);
 
   font-style: italic;
 
-  padding: 1px 0;
+  opacity: 0.9;
 }
 
 .feed-world-dot {
@@ -206,18 +338,22 @@ MATCH STORY UI
 
   border-radius: 50%;
 
-  background: rgba(150,220,120,0.4);
+  background: rgba(180,220,180,0.35);
 
-  margin-top: 7px;
+  margin-top: 9px;
 
   flex-shrink: 0;
 }
+
+/ ===================================
+ICONS
+=================================== /
 
 .feed-icon {
 
   font-size: 13px;
 
-  margin-top: 2px;
+  margin-top: 3px;
 
   flex-shrink: 0;
 
@@ -233,34 +369,44 @@ MATCH STORY UI
   flex: 1;
 }
 
+/ ===================================
+NAME STYLES
+=================================== /
+
 .nk {
 
-  color: #e07060;
+  color: #f06c5f;
 
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .nv {
 
   text-decoration: line-through;
 
-  text-decoration-color: rgba(220,80,60,0.5);
+  text-decoration-color: rgba(220,80,60,0.45);
 
   text-decoration-thickness: 1.5px;
 
-  color: rgba(200,175,165,0.45);
-}
-
-.ns {
-
-  color: #90d870;
+  color: rgba(255,255,255,0.52);
 
   font-weight: 600;
 }
 
+.ns {
+
+  color: #8fe28b;
+
+  font-weight: 700;
+}
+
+/ ===================================
+ELIM FOOTER
+=================================== /
+
 .elim-footer {
 
-  padding: 6px 16px 12px;
+  padding: 8px 18px 14px;
 
   display: flex;
 
@@ -273,21 +419,20 @@ MATCH STORY UI
 
 .elim-name {
 
-  font-size: 11px;
+  font-size: 10px;
 
-  color: rgba(175,140,130,0.38);
+  color: rgba(255,255,255,0.24);
 
   text-decoration: line-through;
 
   text-decoration-color: rgba(200,70,50,0.28);
 
-  letter-spacing: 0.3px;
+  letter-spacing: 0.5px;
 }
 
-/* ===================================
+/ ===================================
 BASE APP
-=================================== */
-
+=================================== /
 
 :root {
 
@@ -339,14 +484,14 @@ body {
   font-family: 'DM Sans', sans-serif;
 }
 
-/* ROOT */
+/ ROOT /
 
 #root {
 
   min-height: 100vh;
 }
 
-/* APP SHELL */
+/ APP SHELL /
 
 .shell {
 
@@ -361,7 +506,7 @@ body {
   background: var(--bg);
 }
 
-/* ATMOSPHERIC BG */
+/ ATMOSPHERIC BG /
 
 .shell::before {
 
@@ -395,7 +540,7 @@ body {
   z-index: 0;
 }
 
-/* PAGE */
+/ PAGE /
 
 .page {
 
@@ -406,7 +551,7 @@ body {
   padding: 20px 16px 90px;
 }
 
-/* TYPOGRAPHY */
+/ TYPOGRAPHY /
 
 .title {
 
@@ -426,7 +571,7 @@ body {
   letter-spacing: 4px;
 }
 
-/* CARDS */
+/ CARDS /
 
 .card {
 
@@ -443,7 +588,7 @@ body {
   backdrop-filter: blur(10px);
 }
 
-/* BUTTONS */
+/ BUTTONS /
 
 .btn-primary {
 
@@ -455,13 +600,20 @@ body {
 
   border-radius: 14px;
 
-  background: var(--red);
+  background: linear-gradient(
+    180deg,
+    #d84838,
+    #b82818
+  );
 
   color: white;
 
   font-weight: 700;
 
   letter-spacing: 1px;
+
+  box-shadow:
+    0 8px 25px rgba(200,40,30,0.28);
 
   transition: 0.2s ease;
 }
@@ -481,7 +633,7 @@ body {
 
   border: 1px solid var(--border2);
 
-  background: transparent;
+  background: rgba(255,255,255,0.02);
 
   color: var(--text);
 
@@ -495,7 +647,7 @@ body {
   background: rgba(255,255,255,0.04);
 }
 
-/* BOTTOM NAV */
+/ BOTTOM NAV /
 
 .bottom-nav {
 
@@ -512,9 +664,9 @@ body {
 
   height: var(--nav-h);
 
-  background: rgba(8,13,26,0.96);
+  background: rgba(8,13,26,0.92);
 
-  border-top: 1px solid var(--border);
+  border-top: 1px solid rgba(255,255,255,0.06);
 
   display: flex;
 
@@ -551,7 +703,7 @@ body {
   color: var(--red);
 }
 
-/* BADGES */
+/ BADGES /
 
 .badge {
 
@@ -605,7 +757,7 @@ body {
   color: var(--gold);
 }
 
-/* ERROR */
+/ ERROR */
 
 .error-card {
 
@@ -620,95 +772,4 @@ body {
   margin-bottom: 14px;
 
   color: var(--red);
-}
-
-/* OLD FEED SUPPORT */
-
-.feed-item {
-
-  padding: 14px 16px;
-
-  border-radius: 14px;
-
-  margin-bottom: 12px;
-
-  line-height: 1.7;
-
-  animation: fadeIn 0.35s ease;
-}
-
-.feed-item-elimination {
-
-  background: rgba(239,68,68,0.12);
-
-  border-left: 3px solid var(--red);
-}
-
-.feed-item-funny {
-
-  background: rgba(249,115,22,0.12);
-
-  border-left: 3px solid var(--orange);
-}
-
-.feed-item-survival {
-
-  background: rgba(34,197,94,0.12);
-
-  border-left: 3px solid var(--green);
-}
-
-.feed-item-narrator {
-
-  background: rgba(255,255,255,0.04);
-
-  color: var(--text2);
-
-  font-style: italic;
-}
-
-.feed-item-round {
-
-  text-align: center;
-
-  background: rgba(255,255,255,0.03);
-
-  border: 1px solid rgba(255,255,255,0.08);
-}
-
-.feed-item-match-end {
-
-  text-align: center;
-
-  background: rgba(168,85,247,0.15);
-
-  border: 1px solid rgba(168,85,247,0.3);
-}
-
-.round-banner {
-
-  font-size: 18px;
-
-  font-weight: 800;
-
-  letter-spacing: 2px;
-}
-
-/* ANIMATIONS */
-
-@keyframes fadeIn {
-
-  from {
-
-    opacity: 0;
-
-    transform: translateY(10px);
-  }
-
-  to {
-
-    opacity: 1;
-
-    transform: translateY(0);
-  }
 }
