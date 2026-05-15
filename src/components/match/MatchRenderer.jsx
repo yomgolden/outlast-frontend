@@ -34,31 +34,46 @@ export default function MatchRenderer({
 
         setVisibleRounds((prev) => [...prev, rounds[i]]);
 
-        if (rounds[i].type === "MATCH_END") {
-          onComplete?.();
-          break;
+        useEffect(() => {
+  if (!rounds.length) return;
+
+  // RESET FIRST
+  setVisibleRounds([]);
+
+  if (!autoPlay) {
+    setVisibleRounds(rounds);
+    return;
+  }
+
+  let mounted = true;
+
+  const play = async () => {
+    for (let i = 0; i < rounds.length; i++) {
+      if (!mounted) return;
+
+      setVisibleRounds((prev) => {
+        // Prevent duplicates
+        if (prev.find((r) => r.round === rounds[i].round)) {
+          return prev;
         }
 
-        await new Promise((resolve) =>
-          setTimeout(resolve, roundDelay)
-        );
+        return [...prev, rounds[i]];
+      });
+
+      if (rounds[i].type === "MATCH_END") {
+        onComplete?.();
+        return;
       }
-    };
 
-    play();
+      await new Promise((resolve) =>
+        setTimeout(resolve, roundDelay)
+      );
+    }
+  };
 
-    return () => {
-      mounted = false;
-    };
-  }, [rounds, roundDelay, autoPlay, onComplete]);
+  play();
 
-  return (
-    <>
-      {visibleRounds.map((round, i) => (
-        <RoundCard key={i} roundData={round} />
-      ))}
-
-      <div ref={bottomRef} />
-    </>
-  );
-}
+  return () => {
+    mounted = false;
+  };
+}, [rounds]);
