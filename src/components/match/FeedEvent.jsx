@@ -1,118 +1,86 @@
 export default function FeedEvent({ event }) {
+  const getStyles = () => {
+    switch (event.type) {
+      case "round":
+        return {
+          border: "1px solid #444",
+          background: "rgba(255,255,255,0.03)",
+          glow: "0 0 25px rgba(255,255,255,0.08)",
+          text: "text-white uppercase tracking-[0.3em] text-center",
+        };
 
-  // WORLD EVENT
-  if (event.type === "WORLD_EVENT") {
+      case "narration":
+        return {
+          border: "1px solid #525252",
+          background: "rgba(255,255,255,0.04)",
+          glow: "0 0 25px rgba(255,255,255,0.05)",
+          text: "italic text-zinc-300",
+        };
 
-    return (
-      <div
-        className="feed-world"
-        style={{ opacity: 0.72 }}
-      >
-        <div className="feed-world-dot" />
+      case "world":
+        return {
+          border: "1px solid #1e3a8a",
+          background: "rgba(30,58,138,0.25)",
+          glow: "0 0 25px rgba(59,130,246,0.25)",
+          text: "text-blue-100",
+        };
 
-        <span>
-          {event.message}
-        </span>
-      </div>
-    );
-  }
+      case "elimination":
+        return {
+          border: "1px solid #7f1d1d",
+          background: "rgba(127,29,29,0.25)",
+          glow: "0 0 30px rgba(255,0,0,0.3)",
+          text: "text-red-100",
+        };
 
-  // SURVIVAL
-  if (event.type === "SURVIVAL") {
+      case "survival":
+        return {
+          border: "1px solid #14532d",
+          background: "rgba(20,83,45,0.25)",
+          glow: "0 0 25px rgba(34,197,94,0.25)",
+          text: "text-green-100",
+        };
 
-    const html =
-      event.message.replace(
-        event.message.split(" ")[0],
-        `<span class="ns">${event.message.split(" ")[0]}</span>`
-      );
+      case "funny":
+        return {
+          border: "1px solid #854d0e",
+          background: "rgba(133,77,14,0.25)",
+          glow: "0 0 25px rgba(234,179,8,0.2)",
+          text: "text-yellow-100",
+        };
 
-    return (
-      <div className="feed-survival">
+      case "system":
+        return {
+          border: "1px solid #27272a",
+          background: "rgba(39,39,42,0.4)",
+          glow: "none",
+          text: "text-zinc-400 text-sm text-center",
+        };
 
-        <span className="feed-icon">
-          🌿
-        </span>
-
-        <span
-          className="feed-text"
-          dangerouslySetInnerHTML={{
-            __html: html
-          }}
-        />
-
-      </div>
-    );
-  }
-
-  // FUNNY DEATH
-  if (event.type === "FUNNY_DEATH") {
-
-    let html = event.message;
-
-    if (event.victim) {
-
-      html = html.replace(
-        new RegExp(event.victim, "g"),
-        `<span class="nv">${event.victim}</span>`
-      );
+      default:
+        return {
+          border: "1px solid #333",
+          background: "#111",
+          glow: "none",
+          text: "text-white",
+        };
     }
+  };
 
-    return (
-      <div className="feed-funny">
+  const styles = getStyles();
 
-        <span className="feed-icon">
-          💀
-        </span>
-
-        <span
-          className="feed-text"
-          dangerouslySetInnerHTML={{
-            __html: html
-          }}
-        />
-
-      </div>
-    );
-  }
-
-  // ELIMINATION
-  if (event.type === "ELIMINATION") {
-
-    let html = event.message;
-
-    if (event.killer) {
-
-      html = html.replace(
-        new RegExp(event.killer, "g"),
-        `<span class="nk">${event.killer}</span>`
-      );
-    }
-
-    if (event.victim) {
-
-      html = html.replace(
-        new RegExp(event.victim, "g"),
-        `<span class="nv">${event.victim}</span>`
-      );
-    }
-
-    return (
-      <div className="feed-kill">
-
-        <span className="feed-icon">
-          ⚔️
-        </span>
-
-        <span
-          className="feed-text"
-          dangerouslySetInnerHTML={{
-            __html: html
-          }}
-        />
-
-      </div>
-    );
-  }
-
-  return null;
+  return (
+    <div
+      className="rounded-2xl p-4 transition-all duration-700 animate-fadeIn"
+      style={{
+        border: styles.border,
+        background: styles.background,
+        boxShadow: styles.glow,
+      }}
+    >
+      <p className={`leading-7 ${styles.text}`}>
+        {event.text}
+      </p>
+    </div>
+  );
 }
