@@ -1,255 +1,64 @@
-import { useEffect, useState, useRef } from "react";
-import { useNavigate } from "react-router-dom";
-import { getEventFeed } from "../api/api";
-import { useMatch } from "../context/MatchContext";
+import {
+  useEffect,
+  useState,
+  useRef
+} from "react";
+
+import {
+  useNavigate
+} from "react-router-dom";
+
+import {
+  getEventFeed
+} from "../api/api";
+
+import {
+  useMatch
+} from "../context/MatchContext";
+
+import MatchRenderer from "../components/match/MatchRenderer";
 
 const ROUND_DELAY = 6000;
 
 const THEMES = {
+
   mushin_nightmare: {
+
     css: "theme-mushin",
-    bg: "radial-gradient(ellipse 60% 40% at 30% 0%, rgba(255,140,20,0.06) 0%, transparent 60%)"
+
+    bg:
+      "radial-gradient(ellipse 60% 40% at 30% 0%, rgba(255,140,20,0.06) 0%, transparent 60%)"
   },
+
   blackout_yaba: {
+
     css: "theme-yaba",
-    bg: "radial-gradient(ellipse 60% 50% at 50% 20%, rgba(40,80,200,0.05) 0%, transparent 70%)"
+
+    bg:
+      "radial-gradient(ellipse 60% 50% at 50% 20%, rgba(40,80,200,0.05) 0%, transparent 70%)"
   },
+
   ajegunle_warzone: {
+
     css: "theme-ajegunle",
-    bg: "radial-gradient(ellipse 80% 30% at 50% 100%, rgba(0,30,5,0.8) 0%, transparent 70%)"
+
+    bg:
+      "radial-gradient(ellipse 80% 30% at 50% 100%, rgba(0,30,5,0.8) 0%, transparent 70%)"
   },
+
   evil_forest: {
+
     css: "theme-forest",
-    bg: "radial-gradient(ellipse 100% 50% at 50% 100%, rgba(10,30,5,0.9) 0%, transparent 70%)"
+
+    bg:
+      "radial-gradient(ellipse 100% 50% at 50% 100%, rgba(10,30,5,0.9) 0%, transparent 70%)"
   }
 };
 
-function RoundCard({ roundData, eventType }) {
-
-  const theme = THEMES[eventType] || THEMES.evil_forest;
-
-  if (roundData.type === "INTRO") {
-    return (
-      <div className="round-card round-card-intro">
-        {roundData.events.map((ev, i) => (
-          <div
-            key={i}
-            style={{
-              fontFamily: "Bebas Neue, sans-serif",
-              fontSize: i === 0 ? 22 : 16,
-              letterSpacing: i === 0 ? 3 : 1,
-              color: i === 0
-                ? "var(--accent, #90d870)"
-                : "rgba(200,190,160,0.6)",
-              marginBottom: 6,
-              textAlign: "center"
-            }}
-          >
-            {ev.message}
-          </div>
-        ))}
-      </div>
-    );
-  }
-
-  if (roundData.type === "MATCH_END") {
-    return (
-      <div className="round-card round-card-end">
-
-        <div
-          style={{
-            fontFamily: "Bebas Neue, sans-serif",
-            fontSize: 26,
-            letterSpacing: 5,
-            textAlign: "center",
-            color: "rgba(230,200,180,0.9)",
-            marginBottom: 6
-          }}
-        >
-          MATCH COMPLETE
-        </div>
-
-        {roundData.winner && (
-          <div
-            style={{
-              textAlign: "center",
-              fontSize: 14,
-              color: "rgba(180,160,140,0.5)",
-              fontStyle: "italic"
-            }}
-          >
-            {roundData.winner} survived.
-          </div>
-        )}
-
-      </div>
-    );
-  }
-
-  return (
-    <div className="round-card">
-
-      {/* ROUND HEADER */}
-      <div className="round-header">
-        <span className="round-number">
-          — ROUND {roundData.round} —
-        </span>
-
-        <span className="round-count">
-          {roundData.aliveCount} remain
-        </span>
-      </div>
-
-      {/* NARRATION */}
-      {roundData.narration && (
-        <div
-          className="round-narration"
-          style={{
-            fontWeight: 600,
-            color: "rgba(220,210,190,0.72)"
-          }}
-        >
-          {roundData.narration}
-        </div>
-      )}
-
-      {/* EVENTS */}
-      <div className="feed-sequence">
-
-        {roundData.events.map((ev, i) => {
-
-          // WORLD EVENT
-          if (ev.type === "WORLD_EVENT") {
-            return (
-              <div
-                key={i}
-                className="feed-world"
-                style={{ opacity: 0.72 }}
-              >
-                <div className="feed-world-dot" />
-                <span>{ev.message}</span>
-              </div>
-            );
-          }
-
-          // SURVIVAL
-          if (ev.type === "SURVIVAL") {
-
-            return (
-              <div key={i} className="feed-survival">
-
-                <span className="feed-icon">
-                  🌿
-                </span>
-
-                <span
-                  className="feed-text"
-                  dangerouslySetInnerHTML={{
-                    __html: ev.message.replace(
-                      ev.message.split(" ")[0],
-                      `<span class="ns">${ev.message.split(" ")[0]}</span>`
-                    )
-                  }}
-                />
-
-              </div>
-            );
-          }
-
-          // FUNNY DEATH
-          if (ev.type === "FUNNY_DEATH") {
-
-            return (
-              <div key={i} className="feed-funny">
-
-                <span className="feed-icon">
-                  💀
-                </span>
-
-                <span
-                  className="feed-text"
-                  dangerouslySetInnerHTML={{
-                    __html: ev.victim
-                      ? ev.message.replace(
-                          ev.victim,
-                          `<span class="nv">${ev.victim}</span>`
-                        )
-                      : ev.message
-                  }}
-                />
-
-              </div>
-            );
-          }
-
-          // ELIMINATION
-          if (ev.type === "ELIMINATION") {
-
-            let html = ev.message;
-
-            if (ev.killer) {
-              html = html.replace(
-                new RegExp(ev.killer, "g"),
-                `<span class="nk">${ev.killer}</span>`
-              );
-            }
-
-            if (ev.victim) {
-              html = html.replace(
-                new RegExp(ev.victim, "g"),
-                `<span class="nv">${ev.victim}</span>`
-              );
-            }
-
-            return (
-              <div key={i} className="feed-kill">
-
-                <span className="feed-icon">
-                  ⚔️
-                </span>
-
-                <span
-                  className="feed-text"
-                  dangerouslySetInnerHTML={{
-                    __html: html
-                  }}
-                />
-
-              </div>
-            );
-          }
-
-          return null;
-
-        })}
-
-      </div>
-
-      {/* ELIMINATED ROSTER */}
-      {roundData.eliminated?.length > 0 && (
-
-        <div className="elim-footer">
-
-          {roundData.eliminated.map((name, i) => (
-            <span
-              key={i}
-              className="elim-name"
-            >
-              {name}
-            </span>
-          ))}
-
-        </div>
-
-      )}
-
-    </div>
-  );
-}
-
 export default function Match() {
 
-  const navigate = useNavigate();
+  const navigate =
+    useNavigate();
 
   const {
     match,
@@ -257,219 +66,329 @@ export default function Match() {
     clearMatch
   } = useMatch();
 
-  const [visibleRounds, setVisibleRounds] = useState([]);
-  const [alive, setAlive] = useState(20);
-  const [currentRound, setCurrentRound] = useState(0);
-  const [starting, setStarting] = useState(true);
-  const [complete, setComplete] = useState(false);
-  const [error, setError] = useState("");
+  const [storyRounds, setStoryRounds] =
+    useState([]);
 
-  const startedRef = useRef(false);
-  const bottomRef = useRef(null);
+  const [alive, setAlive] =
+    useState(20);
 
-  // AUTO SCROLL
-  useEffect(() => {
+  const [currentRound, setCurrentRound] =
+    useState(0);
 
-    if (bottomRef.current) {
-      bottomRef.current.scrollIntoView({
-        behavior: "smooth"
-      });
-    }
+  const [starting, setStarting] =
+    useState(true);
 
-  }, [visibleRounds]);
+  const [complete, setComplete] =
+    useState(false);
 
-  // LOAD MATCH
+  const [error, setError] =
+    useState("");
+
+  const startedRef =
+    useRef(false);
+
+  /*
+  =====================================
+  LOAD MATCH
+  =====================================
+  */
+
   useEffect(() => {
 
     if (!match?.eventId) {
-      navigate("/", { replace: true });
+
+      navigate("/", {
+        replace: true
+      });
+
       return;
     }
 
-    if (startedRef.current) return;
+    if (startedRef.current)
+      return;
+
     startedRef.current = true;
 
-    const load = async () => {
+    const load =
+      async () => {
 
-      try {
+        try {
 
-        let data;
-        let attempts = 0;
+          let data;
 
-        // POLL
-        while (attempts < 30) {
+          let attempts = 0;
 
-          data = await getEventFeed(match.eventId);
+          /*
+          =====================================
+          POLL FOR MATCH DATA
+          =====================================
+          */
 
-          if (data?.storyRounds?.length > 0) break;
+          while (attempts < 30) {
 
-          await new Promise(r => setTimeout(r, 1000));
+            data =
+              await getEventFeed(
+                match.eventId
+              );
 
-          attempts++;
-        }
+            if (
+              data?.storyRounds?.length > 0
+            ) break;
 
-        // ERROR
-        if (!data?.storyRounds?.length) {
+            await new Promise(
+              r => setTimeout(r, 1000)
+            );
 
-          setError("Match data unavailable");
-
-          setTimeout(() => {
-            clearMatch();
-            navigate("/", { replace: true });
-          }, 2000);
-
-          return;
-        }
-
-        // WATCHED
-        const seen = localStorage.getItem(
-          `match_seen_${match.eventId}`
-        );
-
-        if (
-          seen &&
-          data.status === "ENDED" &&
-          data.finalResults
-        ) {
-
-          setResults({
-            results: data.finalResults
-          });
-
-          navigate("/results", {
-            replace: true
-          });
-
-          return;
-        }
-
-        setStarting(false);
-
-        // STREAM ROUNDS
-        for (let i = 0; i < data.storyRounds.length; i++) {
-
-          const round = data.storyRounds[i];
-
-          setVisibleRounds(prev => [
-            ...prev,
-            round
-          ]);
-
-          setCurrentRound(round.round || 0);
-
-          if (round.aliveCount !== undefined) {
-            setAlive(round.aliveCount);
+            attempts++;
           }
 
-          // MATCH END
-if (round.type === "MATCH_END") {
+          /*
+          =====================================
+          NO MATCH DATA
+          =====================================
+          */
 
-  // SAVE HISTORY
-  console.log(
-    "SAVING STORY ROUNDS:",
-    [
-      ...visibleRounds,
-      round
-    ]
-  );
+          if (
+            !data?.storyRounds?.length
+          ) {
 
-  const history = JSON.parse(
-    localStorage.getItem("outlast_history") || "[]"
-  );
+            setError(
+              "Match data unavailable"
+            );
 
-  history.unshift({
-    theme: match?.theme,
-    location: match?.location,
-    danger: match?.danger,
+            setTimeout(() => {
 
-    winner:
-      data.finalResults?.[0]?.username ||
-      "Unknown",
+              clearMatch();
 
-    totalPlayers:
-      data.finalResults?.length || 0,
+              navigate("/", {
+                replace: true
+              });
 
-    date: new Date().toLocaleString(),
+            }, 2000);
 
-    // FIXED REPLAY SAVE
-    storyRounds: [
-      ...visibleRounds,
-      round
-    ],
+            return;
+          }
 
-    results:
-      data.finalResults || []
-  });
+          /*
+          =====================================
+          ALREADY WATCHED
+          =====================================
+          */
 
-  localStorage.setItem(
-    "outlast_history",
-    JSON.stringify(history.slice(0, 20))
-  );
+          const seen =
+            localStorage.getItem(
+              `match_seen_${match.eventId}`
+            );
 
-  setResults({
-    results: data.finalResults || []
-  });
+          if (
+            seen &&
+            data.status === "ENDED" &&
+            data.finalResults
+          ) {
 
-  setComplete(true);
+            setResults({
+              results:
+                data.finalResults
+            });
 
-  localStorage.setItem(
-    `match_seen_${match.eventId}`,
-    "true"
-  );
+            navigate(
+              "/results",
+              {
+                replace: true
+              }
+            );
 
-  break;
-}
+            return;
+          }
 
-          await new Promise(
-            r => setTimeout(r, ROUND_DELAY)
+          /*
+          =====================================
+          START MATCH
+          =====================================
+          */
+
+          setStarting(false);
+
+          setStoryRounds(
+            data.storyRounds || []
           );
-        }
 
-      } catch (err) {
+          /*
+          =====================================
+          TRACK FINAL ROUND INFO
+          =====================================
+          */
 
-        console.error(
-          "MATCH ERROR:",
-          err
-        );
+          const finalRound =
+            data.storyRounds[
+              data.storyRounds.length - 1
+            ];
 
-        setError(
-          err.message || "Failed to load match"
-        );
+          if (
+            finalRound?.aliveCount !==
+            undefined
+          ) {
 
-        setTimeout(() => {
+            setAlive(
+              finalRound.aliveCount
+            );
+          }
 
-          clearMatch();
+          const lastPlayableRound =
+            [...data.storyRounds]
+              .reverse()
+              .find(
+                r =>
+                  r.type === "ROUND"
+              );
 
-          navigate("/", {
-            replace: true
+          if (
+            lastPlayableRound?.round
+          ) {
+
+            setCurrentRound(
+              lastPlayableRound.round
+            );
+          }
+
+          /*
+          =====================================
+          SAVE RESULTS
+          =====================================
+          */
+
+          setResults({
+            results:
+              data.finalResults || []
           });
 
-        }, 2000);
-      }
-    };
+        } catch (err) {
+
+          console.error(
+            "MATCH ERROR:",
+            err
+          );
+
+          setError(
+            err.message ||
+            "Failed to load match"
+          );
+
+          setTimeout(() => {
+
+            clearMatch();
+
+            navigate("/", {
+              replace: true
+            });
+
+          }, 2000);
+        }
+      };
 
     load();
 
   }, []);
 
+  /*
+  =====================================
+  MATCH COMPLETE
+  =====================================
+  */
+
+  const handleComplete =
+    () => {
+
+      if (!storyRounds.length)
+        return;
+
+      /*
+      =====================================
+      SAVE HISTORY
+      =====================================
+      */
+
+      const history = JSON.parse(
+        localStorage.getItem(
+          "outlast_history"
+        ) || "[]"
+      );
+
+      history.unshift({
+
+        theme:
+          match?.theme,
+
+        location:
+          match?.location,
+
+        danger:
+          match?.danger,
+
+        winner:
+          storyRounds.find(
+            r =>
+              r.type === "MATCH_END"
+          )?.winner || "Unknown",
+
+        totalPlayers:
+          20,
+
+        date:
+          new Date()
+            .toLocaleString(),
+
+        storyRounds
+      });
+
+      localStorage.setItem(
+        "outlast_history",
+        JSON.stringify(
+          history.slice(0, 20)
+        )
+      );
+
+      localStorage.setItem(
+        `match_seen_${match.eventId}`,
+        "true"
+      );
+
+      setComplete(true);
+    };
+
+  /*
+  =====================================
+  THEME
+  =====================================
+  */
+
   const eventType =
-    match?.eventType || "evil_forest";
+    match?.eventType ||
+    "evil_forest";
 
   const theme =
-    THEMES[eventType] || THEMES.evil_forest;
+    THEMES[eventType] ||
+    THEMES.evil_forest;
 
   const dangerColor =
     match?.danger === "EXTREME"
+
       ? "var(--red)"
+
       : match?.danger === "HIGH"
+
       ? "var(--orange)"
+
       : "var(--gold)";
 
   return (
 
-    <div className={`page match-page ${theme.css}`}>
+    <div
+      className={`page match-page ${theme.css}`}
+    >
 
       {/* BG */}
+
       <div
         style={{
           position: "fixed",
@@ -488,13 +407,22 @@ if (round.type === "MATCH_END") {
       >
 
         {/* HEADER */}
-        <div style={{ marginBottom: 16 }}>
+
+        <div
+          style={{
+            marginBottom: 16
+          }}
+        >
 
           <div
             style={{
-              fontFamily: "Bebas Neue, sans-serif",
+              fontFamily:
+                "Bebas Neue, sans-serif",
+
               fontSize: 30,
+
               letterSpacing: 3,
+
               marginBottom: 10
             }}
           >
@@ -528,6 +456,7 @@ if (round.type === "MATCH_END") {
         </div>
 
         {/* DANGER */}
+
         <div
           className="card"
           style={{
@@ -539,8 +468,11 @@ if (round.type === "MATCH_END") {
           <div
             style={{
               display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center"
+              justifyContent:
+                "space-between",
+
+              alignItems:
+                "center"
             }}
           >
 
@@ -549,9 +481,14 @@ if (round.type === "MATCH_END") {
               <div
                 style={{
                   fontSize: 10,
-                  color: "var(--text3)",
-                  textTransform: "uppercase",
+                  color:
+                    "var(--text3)",
+
+                  textTransform:
+                    "uppercase",
+
                   letterSpacing: 1.5,
+
                   marginBottom: 3
                 }}
               >
@@ -560,10 +497,15 @@ if (round.type === "MATCH_END") {
 
               <div
                 style={{
-                  fontFamily: "Bebas Neue, sans-serif",
+                  fontFamily:
+                    "Bebas Neue, sans-serif",
+
                   fontSize: 18,
+
                   letterSpacing: 2,
-                  color: dangerColor
+
+                  color:
+                    dangerColor
                 }}
               >
                 {match?.danger || "HIGH"}
@@ -574,9 +516,15 @@ if (round.type === "MATCH_END") {
             <div
               style={{
                 fontSize: 12,
-                color: "var(--text3)",
-                fontStyle: "italic",
-                textAlign: "right",
+                color:
+                  "var(--text3)",
+
+                fontStyle:
+                  "italic",
+
+                textAlign:
+                  "right",
+
                 maxWidth: "55%"
               }}
             >
@@ -589,6 +537,7 @@ if (round.type === "MATCH_END") {
         </div>
 
         {/* STARTING */}
+
         {starting && !error && (
 
           <div
@@ -610,9 +559,13 @@ if (round.type === "MATCH_END") {
 
             <div
               style={{
-                fontFamily: "Bebas Neue, sans-serif",
+                fontFamily:
+                  "Bebas Neue, sans-serif",
+
                 fontSize: 20,
+
                 letterSpacing: 2,
+
                 marginBottom: 8
               }}
             >
@@ -621,7 +574,9 @@ if (round.type === "MATCH_END") {
 
             <div
               style={{
-                color: "var(--text3)",
+                color:
+                  "var(--text3)",
+
                 fontSize: 13
               }}
             >
@@ -633,35 +588,50 @@ if (round.type === "MATCH_END") {
         )}
 
         {/* ERROR */}
+
         {error && (
+
           <div className="error-card">
             {error}
           </div>
+
         )}
 
-        {/* ROUNDS */}
-        {visibleRounds.map((round, i) => (
-          <RoundCard
-            key={i}
-            roundData={round}
-            eventType={eventType}
-          />
-        ))}
+        {/* MATCH RENDERER */}
 
-        {/* SCROLL */}
-        <div ref={bottomRef} />
+        {!starting &&
+          !error &&
+          storyRounds.length > 0 && (
+
+          <MatchRenderer
+            rounds={storyRounds}
+            roundDelay={ROUND_DELAY}
+            onComplete={
+              handleComplete
+            }
+          />
+
+        )}
 
         {/* COMPLETE */}
+
         {complete && (
 
-          <div style={{ marginTop: 8 }}>
+          <div
+            style={{
+              marginTop: 8
+            }}
+          >
 
             <button
               className="btn-primary"
               onClick={() =>
-                navigate("/results", {
-                  replace: true
-                })
+                navigate(
+                  "/results",
+                  {
+                    replace: true
+                  }
+                )
               }
               style={{
                 marginBottom: 8
