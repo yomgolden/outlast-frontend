@@ -6,30 +6,25 @@ export default function FeedEvent({ event }) {
     return null;
   }
 
-  // Escape regex special characters
+  // Skip duplicate narration
+  if (event.type === "NARRATION" || event.type === "narration") {
+    return null;
+  }
+
+  // Escape regex special chars
   const escapeRegex = (text) => {
     return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   };
 
   // ========================================
-  // NARRATION - italic, muted
-  // ========================================
-  if (event.type === "NARRATION" || event.type === "narration") {
-    return (
-      <div className="feed-narration">
-        {event.message || event.text}
-      </div>
-    );
-  }
-
-  // ========================================
-  // WORLD EVENT - small, centered dot
+  // WORLD EVENT - blend with normal events
   // ========================================
   if (event.type === "WORLD_EVENT" || event.type === "world") {
     return (
-      <div className="feed-world">
-        <div className="feed-world-dot" />
-        <span>{event.message || event.text}</span>
+      <div className="feed-event">
+        <span className="feed-text">
+          {event.message || event.text}
+        </span>
       </div>
     );
   }
@@ -46,25 +41,23 @@ export default function FeedEvent({ event }) {
   }
 
   // ========================================
-  // SURVIVAL - green highlight
+  // SURVIVAL - plain text
   // ========================================
   if (event.type === "SURVIVAL" || event.type === "survival") {
     let html = event.message || event.text;
 
-    // Highlight survivor
+    // Bold survivor
     if (event.victim) {
       const escapedName = escapeRegex(event.victim);
 
       html = html.replace(
         new RegExp(`\\b${escapedName}\\b`, "g"),
-        `<span class="ns">${event.victim}</span>`
+        `<strong>${event.victim}</strong>`
       );
     }
 
     return (
-      <div className="feed-survival">
-        <span className="feed-icon">🌿</span>
-
+      <div className="feed-event">
         <span
           className="feed-text"
           dangerouslySetInnerHTML={{ __html: html }}
@@ -74,7 +67,7 @@ export default function FeedEvent({ event }) {
   }
 
   // ========================================
-  // FUNNY DEATH - orange, strikethrough victim
+  // FUNNY DEATH - strikethrough victim
   // ========================================
   if (event.type === "FUNNY_DEATH" || event.type === "funny") {
     let html = event.message || event.text;
@@ -84,14 +77,12 @@ export default function FeedEvent({ event }) {
 
       html = html.replace(
         new RegExp(`\\b${escapedVictim}\\b`, "g"),
-        `<span class="nv">${event.victim}</span>`
+        `<strong><strike>${event.victim}</strike></strong>`
       );
     }
 
     return (
-      <div className="feed-funny">
-        <span className="feed-icon">💀</span>
-
+      <div className="feed-event">
         <span
           className="feed-text"
           dangerouslySetInnerHTML={{ __html: html }}
@@ -101,35 +92,33 @@ export default function FeedEvent({ event }) {
   }
 
   // ========================================
-  // ELIMINATION - red killer, strikethrough victim
+  // ELIMINATION - bold killer, strike victim
   // ========================================
   if (event.type === "ELIMINATION" || event.type === "elimination") {
     let html = event.message || event.text;
 
-    // Killer highlight
+    // Bold killer
     if (event.killer) {
       const escapedKiller = escapeRegex(event.killer);
 
       html = html.replace(
         new RegExp(`\\b${escapedKiller}\\b`, "g"),
-        `<span class="nk">${event.killer}</span>`
+        `<strong>${event.killer}</strong>`
       );
     }
 
-    // Victim strikethrough
+    // Strike victim
     if (event.victim) {
       const escapedVictim = escapeRegex(event.victim);
 
       html = html.replace(
         new RegExp(`\\b${escapedVictim}\\b`, "g"),
-        `<span class="nv">${event.victim}</span>`
+        `<strong><strike>${event.victim}</strike></strong>`
       );
     }
 
     return (
-      <div className="feed-kill">
-        <span className="feed-icon">⚔️</span>
-
+      <div className="feed-event">
         <span
           className="feed-text"
           dangerouslySetInnerHTML={{ __html: html }}
