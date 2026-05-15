@@ -18,6 +18,10 @@ import {
 
 import MatchRenderer from "../components/match/MatchRenderer";
 
+import MatchHeader from "../components/match/MatchHeader";
+
+import MatchAtmosphere from "../components/match/MatchAtmosphere";
+
 const ROUND_DELAY = 6000;
 
 const THEMES = {
@@ -370,17 +374,6 @@ export default function Match() {
     THEMES[eventType] ||
     THEMES.evil_forest;
 
-  const dangerColor =
-    match?.danger === "EXTREME"
-
-      ? "var(--red)"
-
-      : match?.danger === "HIGH"
-
-      ? "var(--orange)"
-
-      : "var(--gold)";
-
   return (
 
     <div
@@ -406,196 +399,23 @@ export default function Match() {
         }}
       >
 
-        {/* HEADER */}
+        {/* MATCH HEADER */}
 
-        <div
-          style={{
-            marginBottom: 16
-          }}
-        >
+        <MatchHeader
+          theme={match?.theme}
+          location={match?.location}
+          currentRound={currentRound}
+          alive={alive}
+          danger={match?.danger}
+          tagline={match?.tagline}
+        />
 
-          <div
-            style={{
-              fontFamily:
-                "Bebas Neue, sans-serif",
+        {/* ATMOSPHERE */}
 
-              fontSize: 30,
-
-              letterSpacing: 3,
-
-              marginBottom: 10
-            }}
-          >
-            {match?.theme || "OUTLAST"}
-          </div>
-
-          <div
-            style={{
-              display: "flex",
-              gap: 8,
-              flexWrap: "wrap"
-            }}
-          >
-
-            <span className="badge badge-blue">
-              📍 {match?.location}
-            </span>
-
-            <span className="badge badge-purple">
-              {currentRound > 0
-                ? `ROUND ${currentRound}`
-                : "STARTING"}
-            </span>
-
-            <span className="badge badge-red">
-              ⚔️ {alive} ALIVE
-            </span>
-
-          </div>
-
-        </div>
-
-        {/* DANGER */}
-
-        <div
-          className="card"
-          style={{
-            marginBottom: 16,
-            padding: "12px 16px"
-          }}
-        >
-
-          <div
-            style={{
-              display: "flex",
-              justifyContent:
-                "space-between",
-
-              alignItems:
-                "center"
-            }}
-          >
-
-            <div>
-
-              <div
-                style={{
-                  fontSize: 10,
-                  color:
-                    "var(--text3)",
-
-                  textTransform:
-                    "uppercase",
-
-                  letterSpacing: 1.5,
-
-                  marginBottom: 3
-                }}
-              >
-                Danger Level
-              </div>
-
-              <div
-                style={{
-                  fontFamily:
-                    "Bebas Neue, sans-serif",
-
-                  fontSize: 18,
-
-                  letterSpacing: 2,
-
-                  color:
-                    dangerColor
-                }}
-              >
-                {match?.danger || "HIGH"}
-              </div>
-
-            </div>
-
-            <div
-              style={{
-                fontSize: 12,
-                color:
-                  "var(--text3)",
-
-                fontStyle:
-                  "italic",
-
-                textAlign:
-                  "right",
-
-                maxWidth: "55%"
-              }}
-            >
-              {match?.tagline ||
-                "Survivors are trapped inside the district."}
-            </div>
-
-          </div>
-
-        </div>
-
-        {/* STARTING */}
-
-        {starting && !error && (
-
-          <div
-            className="card"
-            style={{
-              textAlign: "center",
-              padding: "32px 16px"
-            }}
-          >
-
-            <div
-              style={{
-                fontSize: 36,
-                marginBottom: 12
-              }}
-            >
-              ⚡
-            </div>
-
-            <div
-              style={{
-                fontFamily:
-                  "Bebas Neue, sans-serif",
-
-                fontSize: 20,
-
-                letterSpacing: 2,
-
-                marginBottom: 8
-              }}
-            >
-              Arena Opening...
-            </div>
-
-            <div
-              style={{
-                color:
-                  "var(--text3)",
-
-                fontSize: 13
-              }}
-            >
-              Survivors are entering the district.
-            </div>
-
-          </div>
-
-        )}
-
-        {/* ERROR */}
-
-        {error && (
-
-          <div className="error-card">
-            {error}
-          </div>
-
-        )}
+        <MatchAtmosphere
+          starting={starting}
+          error={error}
+        />
 
         {/* MATCH RENDERER */}
 
