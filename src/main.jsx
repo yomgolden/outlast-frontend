@@ -8,9 +8,9 @@ import App from "./App";
 
 import "./styles/base.css";
 
-import "./styles/match.css";
+import "./styles/1-match.css";
 
-import "./styles/theme.css";
+import "./styles/2-theme.css";
 
 import {
   UserProvider
