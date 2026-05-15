@@ -3,13 +3,16 @@ MATCH ROUND CARD STYLES
 =================================== */
 
 .round-card {
-  background: rgba(10,20,8,0.55);
+  background: rgba(10, 20, 8, 0.55);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  border: 1px solid rgba(255,255,255,0.07);
+
+  border: 1px solid rgba(255, 255, 255, 0.07);
   border-radius: 18px;
+
   margin-bottom: 14px;
   overflow: hidden;
+
   animation: cardReveal 0.5s ease forwards;
   opacity: 0;
   transform: translateY(10px);
@@ -18,13 +21,15 @@ MATCH ROUND CARD STYLES
 .round-card-intro {
   padding: 20px 18px;
   text-align: center;
-  border-color: rgba(255,255,255,0.05);
+
+  border-color: rgba(255, 255, 255, 0.05);
 }
 
 .round-card-end {
   padding: 24px 18px;
-  background: rgba(25,5,5,0.65) !important;
-  border-color: rgba(200,60,40,0.18) !important;
+
+  background: rgba(25, 5, 5, 0.65) !important;
+  border-color: rgba(200, 60, 40, 0.18) !important;
 }
 
 @keyframes cardReveal {
@@ -40,45 +45,43 @@ ROUND HEADER
 
 .round-header {
   padding: 12px 16px 10px;
-  border-bottom: 1px solid rgba(255,255,255,0.05);
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
 .round-number {
-  font-family: 'Bebas Neue', sans-serif;
+  font-family: "Bebas Neue", sans-serif;
   font-size: 16px;
   letter-spacing: 3px;
-  color: rgba(200,190,160,0.45);
+
+  color: rgba(200, 190, 160, 0.45);
 }
 
 .round-count {
   font-size: 11px;
-  color: rgba(180,170,150,0.3);
   font-style: italic;
+
+  color: rgba(180, 170, 150, 0.3);
 }
 
 /* ===================================
-ROUND NARRATION
+ROUND NARRATION - show once
 =================================== */
 
 .round-narration {
   padding: 12px 16px 8px;
-  font-size: 14px;
-  font-style: italic;
-  color: rgba(200,190,160,0.48);
-  line-height: 1.7;
-  border-bottom: 1px solid rgba(255,255,255,0.04);
-}
 
-.feed-narration {
-  padding: 10px 16px;
   font-size: 14px;
   font-style: italic;
-  color: rgba(200,190,160,0.48);
   line-height: 1.7;
-  border-bottom: 1px solid rgba(255,255,255,0.04);
+
+  color: rgba(200, 190, 160, 0.48);
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
 }
 
 /* ===================================
@@ -87,75 +90,41 @@ FEED SEQUENCE
 
 .feed-sequence {
   padding: 10px 16px 12px;
+
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 
 /* ===================================
-FEED EVENT TYPES
+FEED EVENTS
 =================================== */
 
-.feed-kill {
-  display: flex;
-  gap: 9px;
-  align-items: flex-start;
+.feed-event {
   font-size: 15px;
   line-height: 1.65;
-  color: rgba(230,210,195,0.88);
-}
 
-.feed-funny {
-  display: flex;
-  gap: 9px;
-  align-items: flex-start;
-  font-size: 15px;
-  line-height: 1.65;
-  color: rgba(225,205,140,0.82);
-}
+  color: rgba(230, 220, 210, 0.88);
 
-.feed-survival {
-  display: flex;
-  gap: 9px;
-  align-items: flex-start;
-  font-size: 15px;
-  line-height: 1.65;
-  color: rgba(160,220,155,0.82);
-}
+  word-break: break-word;
+  white-space: pre-wrap;
 
-.feed-world {
-  display: flex;
-  gap: 8px;
-  align-items: flex-start;
-  font-size: 13px;
-  line-height: 1.6;
-  color: rgba(180,200,170,0.45);
-  font-style: italic;
-  padding: 1px 0;
+  animation: feedFade 0.35s ease;
 }
 
 .feed-system {
   padding: 8px 16px;
+
   font-size: 12px;
+  font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 1px;
-  color: rgba(180,170,150,0.3);
-  text-align: center;
-  border-top: 1px solid rgba(255,255,255,0.04);
-  font-weight: 600;
-}
 
-/* ===================================
-FEED ICONS AND TEXT
-=================================== */
+  color: rgba(180, 170, 150, 0.3);
 
-.feed-icon {
-  font-size: 13px;
-  margin-top: 2px;
-  flex-shrink: 0;
-  width: 16px;
   text-align: center;
-  opacity: 0.8;
+
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
 }
 
 .feed-text {
@@ -163,13 +132,21 @@ FEED ICONS AND TEXT
   word-break: break-word;
 }
 
-.feed-world-dot {
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: rgba(150,220,120,0.4);
-  margin-top: 7px;
-  flex-shrink: 0;
+/* ===================================
+TEXT FORMATTING
+=================================== */
+
+.feed-text strong {
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.feed-text strike {
+  color: rgba(200, 200, 200, 0.5);
+
+  text-decoration: line-through;
+  text-decoration-color: rgba(200, 80, 60, 0.5);
+  text-decoration-thickness: 1.5px;
 }
 
 /* ===================================
@@ -178,37 +155,36 @@ ELIMINATED PLAYERS
 
 .elim-footer {
   padding: 6px 16px 12px;
+
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
-  border-top: 1px solid rgba(255,255,255,0.04);
+
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
 }
 
 .elim-name {
   font-size: 11px;
-  color: rgba(175,140,130,0.38);
-  text-decoration: line-through;
-  text-decoration-color: rgba(200,70,50,0.28);
   letter-spacing: 0.3px;
+
+  color: rgba(175, 140, 130, 0.38);
+
+  text-decoration: line-through;
+  text-decoration-color: rgba(200, 70, 50, 0.28);
 }
 
 /* ===================================
-NAME STYLING
+EVENT FADE ANIMATION
 =================================== */
 
-.nk {
-  color: #e07060;
-  font-weight: 600;
-}
+@keyframes feedFade {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
 
-.nv {
-  text-decoration: line-through;
-  text-decoration-color: rgba(220,80,60,0.5);
-  text-decoration-thickness: 1.5px;
-  color: rgba(200,175,165,0.45);
-}
-
-.ns {
-  color: #90d870;
-  font-weight: 600;
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
