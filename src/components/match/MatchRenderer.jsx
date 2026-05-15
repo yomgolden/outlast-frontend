@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from “react”;
-import RoundCard from “./RoundCard”;
+import { useEffect, useRef, useState } from "react";
+import RoundCard from "./RoundCard";
 
 export default function MatchRenderer({
 rounds = [],
