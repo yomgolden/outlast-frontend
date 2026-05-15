@@ -21,6 +21,11 @@ export default function MatchRenderer({
 
   // RENDER SEQUENCE
   useEffect(() => {
+    if (!rounds.length) return;
+
+    // RESET FIRST
+    setVisibleRounds([]);
+
     if (!autoPlay) {
       setVisibleRounds(rounds);
       return;
@@ -32,48 +37,41 @@ export default function MatchRenderer({
       for (let i = 0; i < rounds.length; i++) {
         if (!mounted) return;
 
-        setVisibleRounds((prev) => [...prev, rounds[i]]);
+        setVisibleRounds((prev) => {
+          // Prevent duplicates
+          if (prev.find((r) => r.round === rounds[i].round)) {
+            return prev;
+          }
 
-        useEffect(() => {
-  if (!rounds.length) return;
+          return [...prev, rounds[i]];
+        });
 
-  // RESET FIRST
-  setVisibleRounds([]);
-
-  if (!autoPlay) {
-    setVisibleRounds(rounds);
-    return;
-  }
-
-  let mounted = true;
-
-  const play = async () => {
-    for (let i = 0; i < rounds.length; i++) {
-      if (!mounted) return;
-
-      setVisibleRounds((prev) => {
-        // Prevent duplicates
-        if (prev.find((r) => r.round === rounds[i].round)) {
-          return prev;
+        // STOP AT MATCH END
+        if (rounds[i].type === "MATCH_END") {
+          onComplete?.();
+          return;
         }
 
-        return [...prev, rounds[i]];
-      });
-
-      if (rounds[i].type === "MATCH_END") {
-        onComplete?.();
-        return;
+        await new Promise((resolve) =>
+          setTimeout(resolve, roundDelay)
+        );
       }
+    };
 
-      await new Promise((resolve) =>
-        setTimeout(resolve, roundDelay)
-      );
-    }
-  };
+    play();
 
-  play();
+    return () => {
+      mounted = false;
+    };
+  }, [rounds, roundDelay, autoPlay, onComplete]);
 
-  return () => {
-    mounted = false;
-  };
-}, [rounds]);
+  return (
+    <>
+      {visibleRounds.map((round, i) => (
+        <RoundCard key={i} roundData={round} />
+      ))}
+
+      <div ref={bottomRef} />
+    </>
+  );
+}
