@@ -1,68 +1,38 @@
-import {
-  useEffect,
-  useState,
-  useRef
-} from "react";
-
-import {
-  useNavigate
-} from "react-router-dom";
-
-import {
-  getEventFeed
-} from "../api/api";
-
-import {
-  useMatch
-} from "../context/MatchContext";
-
-import MatchRenderer from "../components/match/MatchRenderer";
+import { useEffect, useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import { getEventFeed } from "../api/api";
+import { useMatch } from "../context/MatchContext";
 
 import MatchHeader from "../components/match/MatchHeader";
-
 import MatchAtmosphere from "../components/match/MatchAtmosphere";
+import MatchRenderer from "../components/match/MatchRenderer";
 
 const ROUND_DELAY = 6000;
 
 const THEMES = {
-
   mushin_nightmare: {
-
     css: "theme-mushin",
-
-    bg:
-      "radial-gradient(ellipse 60% 40% at 30% 0%, rgba(255,140,20,0.06) 0%, transparent 60%)"
+    bg: "radial-gradient(ellipse 60% 40% at 30% 0%, rgba(255,140,20,0.06) 0%, transparent 60%)"
   },
 
   blackout_yaba: {
-
     css: "theme-yaba",
-
-    bg:
-      "radial-gradient(ellipse 60% 50% at 50% 20%, rgba(40,80,200,0.05) 0%, transparent 70%)"
+    bg: "radial-gradient(ellipse 60% 50% at 50% 20%, rgba(40,80,200,0.05) 0%, transparent 70%)"
   },
 
   ajegunle_warzone: {
-
     css: "theme-ajegunle",
-
-    bg:
-      "radial-gradient(ellipse 80% 30% at 50% 100%, rgba(0,30,5,0.8) 0%, transparent 70%)"
+    bg: "radial-gradient(ellipse 80% 30% at 50% 100%, rgba(0,30,5,0.8) 0%, transparent 70%)"
   },
 
   evil_forest: {
-
     css: "theme-forest",
-
-    bg:
-      "radial-gradient(ellipse 100% 50% at 50% 100%, rgba(10,30,5,0.9) 0%, transparent 70%)"
+    bg: "radial-gradient(ellipse 100% 50% at 50% 100%, rgba(10,30,5,0.9) 0%, transparent 70%)"
   }
 };
 
 export default function Match() {
-
-  const navigate =
-    useNavigate();
+  const navigate = useNavigate();
 
   const {
     match,
@@ -70,318 +40,140 @@ export default function Match() {
     clearMatch
   } = useMatch();
 
-  const [storyRounds, setStoryRounds] =
-    useState([]);
+  const [starting, setStarting] = useState(true);
+  const [complete, setComplete] = useState(false);
+  const [error, setError] = useState("");
+  const [matchData, setMatchData] = useState(null);
 
-  const [alive, setAlive] =
-    useState(20);
+  const startedRef = useRef(false);
 
-  const [currentRound, setCurrentRound] =
-    useState(0);
-
-  const [starting, setStarting] =
-    useState(true);
-
-  const [complete, setComplete] =
-    useState(false);
-
-  const [error, setError] =
-    useState("");
-
-  const startedRef =
-    useRef(false);
-
-  /*
-  =====================================
-  LOAD MATCH
-  =====================================
-  */
-
+  // LOAD MATCH DATA
   useEffect(() => {
-
     if (!match?.eventId) {
-
-      navigate("/", {
-        replace: true
-      });
-
+      navigate("/", { replace: true });
       return;
     }
 
-    if (startedRef.current)
-      return;
+    if (startedRef.current) return;
 
     startedRef.current = true;
 
-    const load =
-      async () => {
+    const load = async () => {
+      try {
+        let data;
+        let attempts = 0;
 
-        try {
+        // POLL FOR MATCH DATA
+        while (attempts < 30) {
+          data = await getEventFeed(match.eventId);
 
-          let data;
-
-          let attempts = 0;
-
-          /*
-          =====================================
-          POLL FOR MATCH DATA
-          =====================================
-          */
-
-          while (attempts < 30) {
-
-            data =
-              await getEventFeed(
-                match.eventId
-              );
-
-            if (
-              data?.storyRounds?.length > 0
-            ) break;
-
-            await new Promise(
-              r => setTimeout(r, 1000)
-            );
-
-            attempts++;
+          if (data?.storyRounds?.length > 0) {
+            break;
           }
 
-          /*
-          =====================================
-          NO MATCH DATA
-          =====================================
-          */
-
-          if (
-            !data?.storyRounds?.length
-          ) {
-
-            setError(
-              "Match data unavailable"
-            );
-
-            setTimeout(() => {
-
-              clearMatch();
-
-              navigate("/", {
-                replace: true
-              });
-
-            }, 2000);
-
-            return;
-          }
-
-          /*
-          =====================================
-          ALREADY WATCHED
-          =====================================
-          */
-
-          const seen =
-            localStorage.getItem(
-              `match_seen_${match.eventId}`
-            );
-
-          if (
-            seen &&
-            data.status === "ENDED" &&
-            data.finalResults
-          ) {
-
-            setResults({
-              results:
-                data.finalResults
-            });
-
-            navigate(
-              "/results",
-              {
-                replace: true
-              }
-            );
-
-            return;
-          }
-
-          /*
-          =====================================
-          START MATCH
-          =====================================
-          */
-
-          setStarting(false);
-
-          setStoryRounds(
-            data.storyRounds || []
+          await new Promise((resolve) =>
+            setTimeout(resolve, 1000)
           );
 
-          /*
-          =====================================
-          TRACK FINAL ROUND INFO
-          =====================================
-          */
+          attempts++;
+        }
 
-          const finalRound =
-            data.storyRounds[
-              data.storyRounds.length - 1
-            ];
-
-          if (
-            finalRound?.aliveCount !==
-            undefined
-          ) {
-
-            setAlive(
-              finalRound.aliveCount
-            );
-          }
-
-          const lastPlayableRound =
-            [...data.storyRounds]
-              .reverse()
-              .find(
-                r =>
-                  r.type === "ROUND"
-              );
-
-          if (
-            lastPlayableRound?.round
-          ) {
-
-            setCurrentRound(
-              lastPlayableRound.round
-            );
-          }
-
-          /*
-          =====================================
-          SAVE RESULTS
-          =====================================
-          */
-
-          setResults({
-            results:
-              data.finalResults || []
-          });
-
-        } catch (err) {
-
-          console.error(
-            "MATCH ERROR:",
-            err
-          );
-
-          setError(
-            err.message ||
-            "Failed to load match"
-          );
+        // ERROR
+        if (!data?.storyRounds?.length) {
+          setError("Match data unavailable");
 
           setTimeout(() => {
-
             clearMatch();
-
-            navigate("/", {
-              replace: true
-            });
-
+            navigate("/", { replace: true });
           }, 2000);
+
+          return;
         }
-      };
+
+        // CHECK IF ALREADY SEEN
+        const seen = localStorage.getItem(
+          `match_seen_${match.eventId}`
+        );
+
+        if (
+          seen &&
+          data.status === "ENDED" &&
+          data.finalResults
+        ) {
+          setResults({
+            results: data.finalResults
+          });
+
+          navigate("/results", { replace: true });
+
+          return;
+        }
+
+        setMatchData(data);
+        setStarting(false);
+
+      } catch (err) {
+        console.error("MATCH ERROR:", err);
+
+        setError(err.message || "Failed to load match");
+
+        setTimeout(() => {
+          clearMatch();
+          navigate("/", { replace: true });
+        }, 2000);
+      }
+    };
 
     load();
-
   }, []);
 
-  /*
-  =====================================
-  MATCH COMPLETE
-  =====================================
-  */
+  // HANDLE MATCH COMPLETION
+  const handleMatchComplete = () => {
+    setComplete(true);
 
-  const handleComplete =
-    () => {
-
-      if (!storyRounds.length)
-        return;
-
-      /*
-      =====================================
-      SAVE HISTORY
-      =====================================
-      */
-
+    if (matchData?.finalResults) {
+      // SAVE TO HISTORY
       const history = JSON.parse(
-        localStorage.getItem(
-          "outlast_history"
-        ) || "[]"
+        localStorage.getItem("outlast_history") || "[]"
       );
 
       history.unshift({
-
-        theme:
-          match?.theme,
-
-        location:
-          match?.location,
-
-        danger:
-          match?.danger,
-
+        theme: match?.theme,
+        location: match?.location,
+        danger: match?.danger,
         winner:
-          storyRounds.find(
-            r =>
-              r.type === "MATCH_END"
-          )?.winner || "Unknown",
-
-        totalPlayers:
-          20,
-
-        date:
-          new Date()
-            .toLocaleString(),
-
-        storyRounds
+          matchData.finalResults[0]?.username || "Unknown",
+        totalPlayers: matchData.finalResults.length,
+        date: new Date().toLocaleString(),
+        storyRounds: matchData.storyRounds || [],
+        results: matchData.finalResults || []
       });
 
       localStorage.setItem(
         "outlast_history",
-        JSON.stringify(
-          history.slice(0, 20)
-        )
+        JSON.stringify(history.slice(0, 20))
       );
+
+      setResults({
+        results: matchData.finalResults
+      });
 
       localStorage.setItem(
         `match_seen_${match.eventId}`,
         "true"
       );
-
-      setComplete(true);
-    };
-
-  /*
-  =====================================
-  THEME
-  =====================================
-  */
+    }
+  };
 
   const eventType =
-    match?.eventType ||
-    "evil_forest";
+    match?.eventType || "evil_forest";
 
   const theme =
-    THEMES[eventType] ||
-    THEMES.evil_forest;
+    THEMES[eventType] || THEMES.evil_forest;
 
   return (
-
-    <div
-      className={`page match-page ${theme.css}`}
-    >
-
-      {/* BG */}
-
+    <div className={`page match-page ${theme.css}`}>
+      {/* BACKGROUND */}
       <div
         style={{
           position: "fixed",
@@ -398,64 +190,43 @@ export default function Match() {
           zIndex: 1
         }}
       >
-
-        {/* MATCH HEADER */}
-
+        {/* HEADER */}
         <MatchHeader
           theme={match?.theme}
           location={match?.location}
-          currentRound={currentRound}
-          alive={alive}
+          currentRound={0}
+          alive={20}
           danger={match?.danger}
           tagline={match?.tagline}
         />
 
         {/* ATMOSPHERE */}
-
         <MatchAtmosphere
           starting={starting}
           error={error}
         />
 
         {/* MATCH RENDERER */}
-
-        {!starting &&
-          !error &&
-          storyRounds.length > 0 && (
-
+        {matchData && (
           <MatchRenderer
-            rounds={storyRounds}
+            rounds={matchData.storyRounds}
             roundDelay={ROUND_DELAY}
-            onComplete={
-              handleComplete
-            }
+            autoPlay={true}
+            onComplete={handleMatchComplete}
           />
-
         )}
 
-        {/* COMPLETE */}
-
+        {/* COMPLETE BUTTONS */}
         {complete && (
-
-          <div
-            style={{
-              marginTop: 8
-            }}
-          >
-
+          <div style={{ marginTop: 16 }}>
             <button
               className="btn-primary"
               onClick={() =>
-                navigate(
-                  "/results",
-                  {
-                    replace: true
-                  }
-                )
+                navigate("/results", {
+                  replace: true
+                })
               }
-              style={{
-                marginBottom: 8
-              }}
+              style={{ marginBottom: 8 }}
             >
               VIEW RESULTS
             </button>
@@ -463,24 +234,18 @@ export default function Match() {
             <button
               className="btn-secondary"
               onClick={() => {
-
                 clearMatch();
 
                 navigate("/", {
                   replace: true
                 });
-
               }}
             >
               RETURN HOME
             </button>
-
           </div>
-
         )}
-
       </div>
-
     </div>
   );
 }
