@@ -61,7 +61,7 @@ export default function History() {
       return;
     }
 
-    navigate(`/replay/${index}`);
+    navigate(`/history/${index}`);
   };
 
   return (
