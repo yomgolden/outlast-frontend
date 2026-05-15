@@ -1,86 +1,51 @@
 export default function FeedEvent({ event }) {
-  const getStyles = () => {
+  // Helper to format names with Bold/Strikethrough
+  const formatText = (text, killer, victim) => {
+    if (!text) return "";
+    let formatted = text;
+
+    // 1. Bold the Killer/Player (Safe from weird characters)
+    if (killer) {
+      const escapedKiller = killer.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      const killerRegex = new RegExp(`(${escapedKiller})`, "g");
+      formatted = formatted.replace(killerRegex, "<strong>$1</strong>");
+    }
+
+    // 2. Bold and Strikethrough the Victim
+    if (victim) {
+      const escapedVictim = victim.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      const victimRegex = new RegExp(`(${escapedVictim})`, "g");
+      formatted = formatted.replace(victimRegex, "<strong><del>$1</del></strong>");
+    }
+
+    return formatted;
+  };
+
+  const getStyle = () => {
+    // Matching your backend's UPPERCASE types
     switch (event.type) {
-      case "round":
-        return {
-          border: "1px solid #444",
-          background: "rgba(255,255,255,0.03)",
-          glow: "0 0 25px rgba(255,255,255,0.08)",
-          text: "text-white uppercase tracking-[0.3em] text-center",
-        };
-
-      case "narration":
-        return {
-          border: "1px solid #525252",
-          background: "rgba(255,255,255,0.04)",
-          glow: "0 0 25px rgba(255,255,255,0.05)",
-          text: "italic text-zinc-300",
-        };
-
-      case "world":
-        return {
-          border: "1px solid #1e3a8a",
-          background: "rgba(30,58,138,0.25)",
-          glow: "0 0 25px rgba(59,130,246,0.25)",
-          text: "text-blue-100",
-        };
-
-      case "elimination":
-        return {
-          border: "1px solid #7f1d1d",
-          background: "rgba(127,29,29,0.25)",
-          glow: "0 0 30px rgba(255,0,0,0.3)",
-          text: "text-red-100",
-        };
-
-      case "survival":
-        return {
-          border: "1px solid #14532d",
-          background: "rgba(20,83,45,0.25)",
-          glow: "0 0 25px rgba(34,197,94,0.25)",
-          text: "text-green-100",
-        };
-
-      case "funny":
-        return {
-          border: "1px solid #854d0e",
-          background: "rgba(133,77,14,0.25)",
-          glow: "0 0 25px rgba(234,179,8,0.2)",
-          text: "text-yellow-100",
-        };
-
-      case "system":
-        return {
-          border: "1px solid #27272a",
-          background: "rgba(39,39,42,0.4)",
-          glow: "none",
-          text: "text-zinc-400 text-sm text-center",
-        };
-
+      case "NARRATION":
+        return "text-zinc-500 italic font-light text-[16px]";
+      case "WORLD_EVENT":
+        return "text-zinc-400 font-medium tracking-tight";
+      case "SYSTEM":
+        return "text-zinc-600 text-xs uppercase tracking-[0.2em] text-center py-4";
       default:
-        return {
-          border: "1px solid #333",
-          background: "#111",
-          glow: "none",
-          text: "text-white",
-        };
+        return "text-zinc-200 font-normal";
     }
   };
 
-  const styles = getStyles();
+  // Ignore the ROUND markers in the feed (Handled by Card)
+  if (event.type === "ROUND") return null;
 
   return (
-    <div
-      className="rounded-2xl p-4 transition-all duration-700 animate-fadeIn"
-      style={{
-        border: styles.border,
-        background: styles.background,
-        boxShadow: styles.glow,
-      }}
-    >
-      <p className={`leading-7 ${styles.text}`}>
-        {event.text}
-      </p>
+    <div className="mb-4 last:mb-0 animate-fadeIn">
+      <p 
+        className={`text-[17px] leading-relaxed tracking-tight ${getStyle()}`}
+        dangerouslySetInnerHTML={{
+          __html: formatText(event.text || event.message, event.killer, event.victim)
+        }}
+      />
     </div>
   );
 }
