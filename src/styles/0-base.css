@@ -1,0 +1,372 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap');
+
+/* ===================================
+CSS VARIABLES / ROOT
+=================================== */
+
+:root {
+  --bg: #050810;
+  --bg2: #080d1a;
+
+  --surface: #0d1424;
+  --surface2: #111c30;
+
+  --border: #1a2540;
+  --border2: #243050;
+
+  --red: #ef4444;
+  --orange: #f97316;
+  --green: #22c55e;
+  --gold: #eab308;
+  --purple: #a855f7;
+  --blue: #3b82f6;
+
+  --text: #f1f5f9;
+  --text2: #94a3b8;
+  --text3: #475569;
+
+  --nav-h: 64px;
+}
+
+/* ===================================
+RESET / GLOBAL
+=================================== */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  min-height: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+}
+
+/* ===================================
+ROOT ELEMENT
+=================================== */
+
+#root {
+  min-height: 100vh;
+}
+
+/* ===================================
+APP SHELL
+=================================== */
+
+.shell {
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: 100vh;
+  position: relative;
+  background: var(--bg);
+}
+
+/* ATMOSPHERIC BACKGROUND */
+.shell::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 480px;
+  height: 100vh;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      circle at top,
+      rgba(239,68,68,0.08),
+      transparent 40%
+    ),
+    radial-gradient(
+      circle at bottom,
+      rgba(168,85,247,0.06),
+      transparent 40%
+    );
+  z-index: 0;
+}
+
+/* ===================================
+PAGE LAYOUT
+=================================== */
+
+.page {
+  position: relative;
+  z-index: 1;
+  padding: 20px 16px 90px;
+}
+
+/* ===================================
+TYPOGRAPHY
+=================================== */
+
+.title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 36px;
+  letter-spacing: 4px;
+}
+
+.game-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 42px;
+  letter-spacing: 4px;
+}
+
+.section-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 18px;
+  letter-spacing: 2px;
+  margin-bottom: 14px;
+  color: var(--text);
+}
+
+/* ===================================
+CARDS
+=================================== */
+
+.card {
+  background: rgba(13,20,36,0.92);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 14px;
+  backdrop-filter: blur(10px);
+}
+
+/* ===================================
+BUTTONS
+=================================== */
+
+.btn-primary {
+  width: 100%;
+  padding: 16px;
+  border: none;
+  border-radius: 14px;
+  background: var(--red);
+  color: white;
+  font-weight: 700;
+  letter-spacing: 1px;
+  transition: 0.2s ease;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.btn-primary:active {
+  transform: scale(0.98);
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  width: 100%;
+  padding: 14px;
+  border-radius: 14px;
+  border: 1px solid var(--border2);
+  background: transparent;
+  color: var(--text);
+  font-weight: 600;
+  transition: 0.2s ease;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.btn-secondary:active {
+  background: rgba(255,255,255,0.04);
+}
+
+.btn-secondary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ===================================
+BADGES
+=================================== */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.badge-red {
+  background: rgba(239,68,68,0.12);
+  color: var(--red);
+}
+
+.badge-blue {
+  background: rgba(59,130,246,0.12);
+  color: var(--blue);
+}
+
+.badge-purple {
+  background: rgba(168,85,247,0.12);
+  color: var(--purple);
+}
+
+.badge-green {
+  background: rgba(34,197,94,0.12);
+  color: var(--green);
+}
+
+.badge-gold {
+  background: rgba(234,179,8,0.12);
+  color: var(--gold);
+}
+
+.badge-orange {
+  background: rgba(249,115,22,0.12);
+  color: var(--orange);
+}
+
+/* ===================================
+ERROR MESSAGING
+=================================== */
+
+.error-card {
+  background: rgba(239,68,68,0.12);
+  border: 1px solid rgba(239,68,68,0.3);
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 14px;
+  color: var(--red);
+  font-size: 14px;
+}
+
+/* ===================================
+BOTTOM NAVIGATION
+=================================== */
+
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 480px;
+  width: 100%;
+  height: var(--nav-h);
+  background: rgba(8,13,26,0.96);
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  backdrop-filter: blur(20px);
+  z-index: 100;
+}
+
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  gap: 4px;
+  color: var(--text3);
+  transition: 0.2s ease;
+  cursor: pointer;
+}
+
+.nav-item.active {
+  color: var(--red);
+}
+
+/* ===================================
+ANIMATIONS
+=================================== */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.35s ease;
+}
+
+/* ===================================
+UTILITY CLASSES
+=================================== */
+
+.center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.stat-row:last-child {
+  border-bottom: none;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--surface2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  border: 1px solid var(--border2);
+  font-size: 16px;
+}
+
+.avatar-lg {
+  width: 56px;
+  height: 56px;
+  font-size: 22px;
+}
+
+.xp-bar-track {
+  width: 100%;
+  height: 6px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.xp-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--purple), var(--blue));
+  transition: width 0.3s ease;
+}
+
+.rank-1 {
+  color: var(--gold);
+}
+
+.rank-2 {
+  color: #c0c0c0;
+}
+
+.rank-3 {
+  color: #cd7f32;
+}
