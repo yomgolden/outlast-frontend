@@ -8,6 +8,12 @@ import App from "./App";
 
 import "./styles/global.css";
 
+import "./styles/base.css";
+
+import "./styles/match.css";
+
+import "./styles/theme.css";
+
 import {
   UserProvider
 } from "./context/UserContext";
