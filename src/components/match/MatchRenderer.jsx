@@ -8,7 +8,11 @@ export default function MatchRenderer({
   onComplete
 }) {
   const [visibleRounds, setVisibleRounds] = useState([]);
+
   const bottomRef = useRef(null);
+
+  // PREVENT DOUBLE PLAYBACK
+  const startedRef = useRef(false);
 
   // AUTO SCROLL
   useEffect(() => {
@@ -23,7 +27,12 @@ export default function MatchRenderer({
   useEffect(() => {
     if (!rounds.length) return;
 
-    // RESET FIRST
+    // STOP STRICT MODE DOUBLE RUN
+    if (startedRef.current) return;
+
+    startedRef.current = true;
+
+    // RESET
     setVisibleRounds([]);
 
     if (!autoPlay) {
@@ -37,16 +46,12 @@ export default function MatchRenderer({
       for (let i = 0; i < rounds.length; i++) {
         if (!mounted) return;
 
-        setVisibleRounds((prev) => {
-          // Prevent duplicates
-          if (prev.find((r) => r.round === rounds[i].round)) {
-            return prev;
-          }
+        setVisibleRounds((prev) => [
+          ...prev,
+          rounds[i]
+        ]);
 
-          return [...prev, rounds[i]];
-        });
-
-        // STOP AT MATCH END
+        // MATCH COMPLETE
         if (rounds[i].type === "MATCH_END") {
           onComplete?.();
           return;
@@ -63,12 +68,15 @@ export default function MatchRenderer({
     return () => {
       mounted = false;
     };
-  }, [rounds, roundDelay, autoPlay, onComplete]);
+  }, []);
 
   return (
     <>
       {visibleRounds.map((round, i) => (
-        <RoundCard key={i} roundData={round} />
+        <RoundCard
+          key={i}
+          roundData={round}
+        />
       ))}
 
       <div ref={bottomRef} />
