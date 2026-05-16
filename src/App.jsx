@@ -1,5 +1,7 @@
 import { useEffect } from "react";
 
+import { useEffect, useState } from "react";
+import SplashScreen from "./components/SplashScreen";
 import AppRoutes from "./routes/AppRoutes";
 import BottomNav from "./components/BottomNav";
 
