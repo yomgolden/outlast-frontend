@@ -1,28 +1,14 @@
-import evilForestImg from "../../assets/evil-forest.jpeg";
-import {
-  useEffect,
-  useRef,
-  useState
-} from "react";
+import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-import {
-  useNavigate
-} from "react-router-dom";
+import { createEvent } from "../../api/api";
 
-import {
-  createEvent
-} from "../../api/api";
+import { useUser } from "../../context/UserContext";
+import { useMatch } from "../../context/MatchContext";
 
-import {
-  useUser
-} from "../../context/UserContext";
-
-import {
-  useMatch
-} from "../../context/MatchContext";
+import evilForestImg from "../../assets/evil-forest.jpg";
 
 const DANGER_COLORS = {
-
   EXTREME: {
     badge: "badge-red",
     glow: "rgba(239,68,68,0.12)",
@@ -50,24 +36,17 @@ export default function FeaturedCarousel({
   featured = []
 }) {
 
-  const navigate =
-    useNavigate();
+  const navigate = useNavigate();
 
-  const { user } =
-    useUser();
+  const { user } = useUser();
 
-  const { setMatch } =
-    useMatch();
+  const { setMatch } = useMatch();
 
-  const [
-    activeSlide,
-    setActiveSlide
-  ] = useState(0);
+  const [activeSlide, setActiveSlide] =
+    useState(0);
 
-  const [
-    joining,
-    setJoining
-  ] = useState("");
+  const [joining, setJoining] =
+    useState("");
 
   const autoSlideRef =
     useRef(null);
@@ -75,6 +54,7 @@ export default function FeaturedCarousel({
   const touchStartX =
     useRef(0);
 
+  // AUTO SLIDE
   useEffect(() => {
 
     if (featured.length < 2)
@@ -97,6 +77,7 @@ export default function FeaturedCarousel({
 
   }, [featured.length]);
 
+  // PLAY EVENT
   const handlePlay =
     async (eventId) => {
 
@@ -113,10 +94,9 @@ export default function FeaturedCarousel({
 
         setMatch(data);
 
-        navigate(
-          "/queue",
-          { replace: true }
-        );
+        navigate("/queue", {
+          replace: true
+        });
 
       } catch (err) {
 
@@ -128,6 +108,7 @@ export default function FeaturedCarousel({
       }
     };
 
+  // TOUCH START
   const handleTouchStart =
     (e) => {
 
@@ -135,6 +116,7 @@ export default function FeaturedCarousel({
         e.touches[0].clientX;
     };
 
+  // TOUCH END
   const handleTouchEnd =
     (e) => {
 
@@ -158,36 +140,31 @@ export default function FeaturedCarousel({
         } else {
 
           setActiveSlide(prev =>
-            (
-              prev - 1 +
-              featured.length
-            ) %
+            (prev - 1 + featured.length) %
             featured.length
           );
         }
       }
     };
 
-  if (
-    featured.length === 0
-  ) {
-
-    return null;
-  }
-
   const currentEvent =
     featured[activeSlide];
 
+  if (!currentEvent)
+    return null;
+
   const dangerStyle =
-    DANGER_COLORS[
-      currentEvent.danger
-    ] || DANGER_COLORS.HIGH;
+    DANGER_COLORS[currentEvent.danger] ||
+    DANGER_COLORS.HIGH;
+
+  const hasBackground =
+    EVENT_BACKGROUNDS[currentEvent.id];
 
   return (
 
     <div
       style={{
-        marginBottom: 20
+        marginBottom: 24
       }}
     >
 
@@ -196,71 +173,69 @@ export default function FeaturedCarousel({
       </div>
 
       <div
-
-        onTouchStart={
-          handleTouchStart
-        }
-
-        onTouchEnd={
-          handleTouchEnd
-        }
-
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
         style={{
 
-          backgroundImage:
-  currentEvent?.id === "evil_forest"
-    ? `
-      linear-gradient(
-        rgba(0,0,0,0.72),
-        rgba(0,0,0,0.82)
-      ),
-      url(${EVENT_BACKGROUNDS[currentEvent.id]})
-    `
-    : `linear-gradient(135deg, ${dangerStyle.glow}, var(--surface))`,
+          background:
+            hasBackground
 
-backgroundSize: "cover",
-backgroundPosition: "center",
+              ? `
+                linear-gradient(
+                  rgba(0,0,0,0.72),
+                  rgba(0,0,0,0.82)
+                ),
+                url(${EVENT_BACKGROUNDS[currentEvent.id]})
+              `
+
+              : `linear-gradient(
+                  135deg,
+                  ${dangerStyle.glow},
+                  var(--surface)
+                )`,
+
+          backgroundSize: "cover",
+
+          backgroundPosition: "center",
+
           border:
             `1px solid ${dangerStyle.border}`,
 
-          borderRadius: 20,
+          borderRadius: 24,
 
-          padding: 20,
+          padding: 22,
 
           position: "relative",
 
           overflow: "hidden",
 
-          minHeight: 210
+          minHeight: 250,
+
+          transition:
+            "all 0.4s ease"
         }}
       >
 
-        {/* BG ICON */}
-
+        {/* DARK ORB */}
         <div
           style={{
             position: "absolute",
-            right: 12,
+            right: -50,
             top: "50%",
             transform:
               "translateY(-50%)",
 
-            fontSize: 90,
+            width: 180,
+            height: 180,
 
-            opacity: 0.07,
+            borderRadius: "50%",
 
-            pointerEvents:
-              "none"
+            background:
+              dangerStyle.glow,
+
+            filter: "blur(40px)"
           }}
-        >
-
-          {
-            EVENT_ICONS[
-              currentEvent.id
-            ]
-          }
-
-        </div>
+        />
 
         <div
           style={{
@@ -269,11 +244,12 @@ backgroundPosition: "center",
           }}
         >
 
+          {/* BADGES */}
           <div
             style={{
               display: "flex",
               gap: 8,
-              marginBottom: 12,
+              marginBottom: 16,
               flexWrap: "wrap"
             }}
           >
@@ -285,25 +261,27 @@ backgroundPosition: "center",
             </span>
 
             <span className="badge badge-blue">
-
               📍 {currentEvent.location}
-
             </span>
 
           </div>
 
+          {/* TITLE */}
           <div
             style={{
               fontFamily:
                 "Bebas Neue, sans-serif",
 
-              fontSize: 30,
+              fontSize: 42,
 
               letterSpacing: 2,
 
-              lineHeight: 1.1,
+              lineHeight: 0.95,
 
-              marginBottom: 6
+              marginBottom: 12,
+
+              textShadow:
+                "0 0 18px rgba(0,0,0,0.5)"
             }}
           >
 
@@ -311,46 +289,47 @@ backgroundPosition: "center",
 
           </div>
 
+          {/* TAGLINE */}
           <div
             style={{
-              color:
-                "var(--text2)",
+              color: "rgba(255,255,255,0.72)",
 
-              fontSize: 13,
+              fontSize: 14,
 
-              fontStyle:
-                "italic",
+              fontStyle: "italic",
 
-              marginBottom: 16,
+              lineHeight: 1.6,
 
-              lineHeight: 1.5
+              marginBottom: 26,
+
+              maxWidth: "90%"
             }}
           >
 
-            "
-            {currentEvent.tagline}
-            "
+            "{currentEvent.tagline}"
 
           </div>
 
+          {/* BUTTON */}
           <button
             className="btn-primary"
-
             onClick={() =>
-              handlePlay(
-                currentEvent.id
-              )
+              handlePlay(currentEvent.id)
             }
-
             disabled={!!joining}
+            style={{
+              fontSize: 15,
+              padding: "16px 18px"
+            }}
           >
 
-            {joining ===
-            currentEvent.id
+            {
+              joining === currentEvent.id
 
-              ? "ENTERING..."
+                ? "ENTERING..."
 
-              : "⚡ START EVENT"}
+                : "⚡ START EVENT"
+            }
 
           </button>
 
@@ -359,62 +338,45 @@ backgroundPosition: "center",
       </div>
 
       {/* DOTS */}
-
       <div
         style={{
           display: "flex",
-          justifyContent:
-            "center",
-
-          gap: 6,
-
-          marginTop: 10
+          justifyContent: "center",
+          gap: 8,
+          marginTop: 12
         }}
       >
 
-        {featured.map(
-          (_, i) => (
+        {
+          featured.map((_, i) => (
 
             <div
-
               key={i}
-
-              onClick={() => {
-
-                clearInterval(
-                  autoSlideRef.current
-                );
-
-                setActiveSlide(i);
-              }}
-
+              onClick={() =>
+                setActiveSlide(i)
+              }
               style={{
-
                 width:
                   i === activeSlide
-                    ? 20
-                    : 6,
+                    ? 22
+                    : 7,
 
-                height: 6,
+                height: 7,
 
-                borderRadius: 3,
+                borderRadius: 999,
 
                 background:
                   i === activeSlide
-
                     ? "var(--red)"
-
-                    : "var(--border2)",
+                    : "rgba(255,255,255,0.12)",
 
                 transition:
-                  "all 0.3s ease",
-
-                cursor: "pointer"
+                  "all 0.3s ease"
               }}
             />
 
-          )
-        )}
+          ))
+        }
 
       </div>
 
