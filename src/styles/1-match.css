@@ -89,7 +89,7 @@ FEED SEQUENCE
 =================================== */
 
 .feed-sequence {
-  padding: 10px 16px 12px;
+  padding: 8px 14px 10px;
 
   display: flex;
   flex-direction: column;
@@ -101,8 +101,8 @@ FEED EVENTS
 =================================== */
 
 .feed-event {
-  font-size: 15px;
-  line-height: 1.65;
+  font-size: 14px;
+  line-height: 1.55;
 
   color: rgba(230, 220, 210, 0.88);
 
