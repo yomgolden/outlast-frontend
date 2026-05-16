@@ -291,7 +291,7 @@ export default function Queue() {
 
         <div
           style={{
-            fontSize: 72,
+            fontSize: "clamp(48px, 14vw, 72px)",
             fontWeight: 800,
             color: "var(--red)",
             lineHeight: 1
