@@ -1,3 +1,4 @@
+import evilForestImg from "../../assets/evil-forest.jpeg";
 import {
   useEffect,
   useRef,
