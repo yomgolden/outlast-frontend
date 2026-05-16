@@ -22,7 +22,7 @@ export default function HomeHeader() {
 
           fontSize: 45,
 
-          letterSpacing: 1,
+          letterSpacing: 4,
 
           color: "#f8fafc",
 
@@ -33,7 +33,7 @@ export default function HomeHeader() {
             0 0 40px rgba(239,68,68,0.15)
             `,
 
-          lineHeight: 2
+          lineHeight: 1
         }}
       >
 
