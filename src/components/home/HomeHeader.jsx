@@ -5,6 +5,7 @@ export default function HomeHeader() {
     <div
       style={{
         marginBottom: 24,
+        marginTop: 20,
         textAlign: "center"
       }}
     >
