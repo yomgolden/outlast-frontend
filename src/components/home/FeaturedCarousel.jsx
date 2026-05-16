@@ -6,7 +6,7 @@ import { createEvent } from "../../api/api";
 import { useUser } from "../../context/UserContext";
 import { useMatch } from "../../context/MatchContext";
 
-import evilForestImg from "../../assets/evil-forest.jpg";
+import evilForestImg from "../../assets/evil-forest.jpeg";
 
 const DANGER_COLORS = {
   EXTREME: {
