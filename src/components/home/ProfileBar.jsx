@@ -81,7 +81,7 @@ export default function ProfileBar({ user }) {
 
           <div
             style={{
-              fontSize: 20,
+              fontSize: 18,
               fontWeight: 800,
               color: "var(--gold)"
             }}
