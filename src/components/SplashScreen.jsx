@@ -4,7 +4,24 @@ import splash from "../assets/outlast-splash.jpg";
 export default function SplashScreen({ onFinish }) {
   const [fade, setFade] = useState(false);
 
+  const [loadingText, setLoadingText] = useState(
+    "Loading districts"
+  );
+
   useEffect(() => {
+    const texts = [
+      "Loading districts",
+      "Preparing arena",
+      "Engaging threats"
+    ];
+
+    let index = 0;
+
+    const textInterval = setInterval(() => {
+      index = (index + 1) % texts.length;
+      setLoadingText(texts[index]);
+    }, 700);
+
     const timer1 = setTimeout(() => {
       setFade(true);
     }, 2200);
@@ -14,6 +31,7 @@ export default function SplashScreen({ onFinish }) {
     }, 2500);
 
     return () => {
+      clearInterval(textInterval);
       clearTimeout(timer1);
       clearTimeout(timer2);
     };
@@ -42,6 +60,23 @@ export default function SplashScreen({ onFinish }) {
           objectFit: "cover"
         }}
       />
+
+      {/* LOADING TEXT */}
+      <div
+        style={{
+          position: "absolute",
+          bottom: 70,
+          width: "100%",
+          textAlign: "center",
+          color: "#9ca3af",
+          fontSize: 11,
+          letterSpacing: 3,
+          textTransform: "uppercase",
+          fontWeight: 600
+        }}
+      >
+        {loadingText}
+      </div>
     </div>
   );
 }
