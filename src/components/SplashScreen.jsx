@@ -65,7 +65,7 @@ export default function SplashScreen({ onFinish }) {
       <div
         style={{
           position: "absolute",
-          bottom: 70,
+          bottom: 100,
           width: "100%",
           textAlign: "center",
           color: "#9ca3af",
