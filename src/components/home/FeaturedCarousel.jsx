@@ -42,10 +42,8 @@ const DANGER_COLORS = {
   }
 };
 
-const EVENT_ICONS = {
-  mushin_nightmare: "🌆",
-  blackout_yaba: "⚡",
-  ajegunle_warzone: "🔴"
+const EVENT_BACKGROUNDS = {
+  evil_forest: evilForestImg
 };
 
 export default function FeaturedCarousel({
@@ -209,9 +207,19 @@ export default function FeaturedCarousel({
 
         style={{
 
-          background:
-            `linear-gradient(135deg, ${dangerStyle.glow}, var(--surface))`,
+          backgroundImage:
+  currentEvent?.id === "evil_forest"
+    ? `
+      linear-gradient(
+        rgba(0,0,0,0.72),
+        rgba(0,0,0,0.82)
+      ),
+      url(${EVENT_BACKGROUNDS[currentEvent.id]})
+    `
+    : `linear-gradient(135deg, ${dangerStyle.glow}, var(--surface))`,
 
+backgroundSize: "cover",
+backgroundPosition: "center",
           border:
             `1px solid ${dangerStyle.border}`,
 
