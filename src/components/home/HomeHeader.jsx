@@ -5,7 +5,7 @@ export default function HomeHeader() {
     <div
       style={{
         marginBottom: 24,
-        marginTop: 24,
+        marginTop: 27,
         textAlign: "center"
       }}
     >
@@ -15,7 +15,7 @@ export default function HomeHeader() {
           fontFamily:
             "'Creepster', cursive",
 
-          fontSize: 52,
+          fontSize: 47,
 
           letterSpacing: 4,
 
