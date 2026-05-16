@@ -134,7 +134,7 @@ export default function Home() {
               padding: 20,
               position: "relative",
               overflow: "hidden",
-              minHeight: 210,
+              minHeight: 190,
               transition: "all 0.4s ease"
             }}
           >
