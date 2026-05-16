@@ -65,7 +65,7 @@ APP SHELL
 =================================== */
 
 .shell {
-  max-width: 480px;
+  max-width: 430px;
   margin: 0 auto;
   min-height: 100vh;
   position: relative;
@@ -79,7 +79,7 @@ APP SHELL
   top: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 480px;
+  width: 430px;
   height: 100vh;
   pointer-events: none;
   background:
