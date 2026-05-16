@@ -15,7 +15,7 @@ export default function HomeHeader() {
           fontFamily:
             "'Creepster', cursive",
 
-          fontSize: 47,
+          fontSize: 42,
 
           letterSpacing: 4,
 
