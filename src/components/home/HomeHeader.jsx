@@ -1,26 +1,20 @@
-import { useUser } from "../../context/UserContext";
-
 export default function HomeHeader() {
-
-  const { user } = useUser();
 
   return (
 
     <div
       style={{
-        marginBottom: 20,
-      textAlign: "center",
-        position: "relative"
+        marginBottom: 24,
+        textAlign: "center"
       }}
     >
 
-      {/* TITLE */}
       <div
         style={{
           fontFamily:
             "'Creepster', cursive",
 
-          fontSize: 45,
+          fontSize: 52,
 
           letterSpacing: 4,
 
@@ -38,21 +32,6 @@ export default function HomeHeader() {
       >
 
         OUTLAST
-
-      </div>
-
-      {/* SUBTEXT */}
-      <div
-        style={{
-          color: "var(--text3)",
-          fontSize: 10,
-          marginTop: 5,
-          letterSpacing: 2,
-          textTransform: "uppercase"
-        }}
-      >
-
-        Survival Simulation
 
       </div>
 
