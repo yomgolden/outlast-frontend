@@ -84,18 +84,6 @@ export default function ProfileBar({ user }) {
           font-family: 'Rajdhani', sans-serif;
         }
 
-        .pb-online {
-          position: absolute;
-          bottom: -2px;
-          right: -2px;
-          width: 11px;
-          height: 11px;
-          border-radius: 50%;
-          background: #22d3a5;
-          border: 2px solid #080e1f;
-          box-shadow: 0 0 6px rgba(34,211,165,0.7);
-        }
-
         .pb-info {
           flex: 1;
           min-width: 0;
@@ -187,7 +175,6 @@ export default function ProfileBar({ user }) {
               {(user?.username || '?')[0].toUpperCase()}
             </div>
           )}
-          <div className="pb-online" />
         </div>
 
         <div className="pb-info">
