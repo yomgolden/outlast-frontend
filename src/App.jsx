@@ -14,7 +14,9 @@ const tg =
   window.Telegram?.WebApp;
 
 export default function App() {
-
+  
+const [showSplash, setShowSplash] = useState(true);
+  
   useEffect(() => {
 
     if (tg) {
