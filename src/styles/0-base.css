@@ -105,7 +105,7 @@ PAGE LAYOUT
 .page {
   position: relative;
   z-index: 1;
-  padding: 20px 16px 90px;
+  padding: 16px 14px 90px;
 }
 
 /* ===================================
@@ -120,8 +120,8 @@ TYPOGRAPHY
 
 .game-title {
   font-family: 'Bebas Neue', sans-serif;
-  font-size: 42px;
-  letter-spacing: 4px;
+  font-size: clamp(32px, 8vw, 42px);
+  letter-spacing: 3px;
 }
 
 .section-title {
