@@ -1,88 +1,72 @@
 import { useNavigate } from "react-router-dom";
 
-export default function ProfileBar({
-  user
-}) {
+export default function ProfileBar({ user }) {
 
-  const navigate =
-    useNavigate();
-
-  const reputation =
-    (user?.wins || 0) >= 10
-
-      ? "FEARED"
-
-      : (user?.wins || 0) >= 3
-
-      ? "KNOWN"
-
-      : "UNKNOWN";
+  const navigate = useNavigate();
 
   return (
 
     <div
-
-      onClick={() =>
-        navigate("/profile")
-      }
-
+      onClick={() => navigate("/profile")}
+      className="card"
       style={{
-
-        display: "flex",
-
-        alignItems: "center",
-
-        justifyContent:
-          "space-between",
-
-        background:
-          "rgba(13,20,36,0.92)",
-
-        border:
-          "1px solid var(--border)",
-
-        borderRadius: 999,
-
-        padding: "10px 14px",
-
-        marginBottom: 22,
-
+        marginBottom: 20,
         cursor: "pointer"
       }}
     >
-
-      {/* LEFT */}
 
       <div
         style={{
           display: "flex",
           alignItems: "center",
-          gap: 12
+          gap: 14
         }}
       >
 
-        <div
-          className="avatar"
-          style={{
-            width: 46,
-            height: 46,
-            fontSize: 18
-          }}
-        >
+        {/* AVATAR */}
+        {
+          user?.photoUrl ? (
 
-          {
-            (user?.username || "?")[0]
-            .toUpperCase()
-          }
+            <img
+              src={user.photoUrl}
+              alt={user.username}
+              style={{
+                width: 56,
+                height: 56,
+                borderRadius: "50%",
+                objectFit: "cover",
+                border: "1px solid var(--border2)"
+              }}
+            />
 
-        </div>
+          ) : (
 
-        <div>
+            <div className="avatar avatar-lg">
+              {(user?.username || "?")[0].toUpperCase()}
+            </div>
+
+          )
+        }
+
+        {/* USER INFO */}
+        <div style={{ flex: 1 }}>
 
           <div
             style={{
               fontWeight: 700,
-              fontSize: 18
+              fontSize: 17
+            }}
+          >
+
+            {user?.firstName || "Survivor"}
+
+          </div>
+
+          <div
+            style={{
+              color: "var(--text3)",
+              marginTop: 4,
+              fontSize: 13
             }}
           >
 
@@ -90,59 +74,23 @@ export default function ProfileBar({
 
           </div>
 
+        </div>
+
+        {/* GOLD */}
+        <div style={{ textAlign: "right" }}>
+
           <div
             style={{
-              display: "flex",
-              gap: 6,
-              marginTop: 4,
-              flexWrap: "wrap"
+              fontSize: 20,
+              fontWeight: 800,
+              color: "var(--gold)"
             }}
           >
 
-            <span className="badge badge-purple">
-
-              LVL {user?.level}
-
-            </span>
-
-            <span className="badge badge-orange">
-
-              {reputation}
-
-            </span>
+            🪙 {user?.gold || 0}
 
           </div>
 
-        </div>
-
-      </div>
-
-      {/* RIGHT */}
-
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 10
-        }}
-      >
-
-        <span className="badge badge-gold">
-
-          🪙
-          {" "}
-          {user?.gold?.toLocaleString()}
-
-        </span>
-
-        <div
-          style={{
-            fontSize: 22,
-            color:
-              "var(--text3)"
-          }}
-        >
-          ›
         </div>
 
       </div>
