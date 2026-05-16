@@ -8,7 +8,7 @@ export default function HomeHeader() {
 
     <div
       style={{
-        marginBottom: 22,
+        marginBottom: 28,
         textAlign: "center",
         position: "relative"
       }}
