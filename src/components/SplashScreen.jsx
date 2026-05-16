@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import splash from "../assets/outlast-splash.jpg";
+import splash from "../assets/outlast-splash.JPG";
 
 export default function SplashScreen({ onFinish }) {
   const [fade, setFade] = useState(false);
