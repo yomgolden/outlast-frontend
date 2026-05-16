@@ -8,8 +8,8 @@ export default function HomeHeader() {
 
     <div
       style={{
-        marginBottom: 28,
-        textAlign: "center",
+        marginBottom: 20,
+      textAlign: "center",
         position: "relative"
       }}
     >
@@ -20,7 +20,7 @@ export default function HomeHeader() {
           fontFamily:
             "'Creepster', cursive",
 
-          fontSize: 50,
+          fontSize: 45,
 
           letterSpacing: 4,
 
@@ -33,7 +33,7 @@ export default function HomeHeader() {
             0 0 40px rgba(239,68,68,0.15)
             `,
 
-          lineHeight: 1
+          lineHeight: 2
         }}
       >
 
@@ -45,8 +45,8 @@ export default function HomeHeader() {
       <div
         style={{
           color: "var(--text3)",
-          fontSize: 12,
-          marginTop: 6,
+          fontSize: 10,
+          marginTop: 5,
           letterSpacing: 2,
           textTransform: "uppercase"
         }}
