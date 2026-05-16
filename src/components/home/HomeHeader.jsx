@@ -22,7 +22,7 @@ export default function HomeHeader() {
 
           fontSize: 45,
 
-          letterSpacing: 4,
+          letterSpacing: 1,
 
           color: "#f8fafc",
 
