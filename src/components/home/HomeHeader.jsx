@@ -8,26 +8,11 @@ export default function HomeHeader() {
 
     <div
       style={{
-        marginBottom: 24,
+        marginBottom: 22,
         textAlign: "center",
         position: "relative"
       }}
     >
-
-      {/* GOLD */}
-      <div
-        style={{
-          position: "absolute",
-          right: 0,
-          top: 8
-        }}
-      >
-
-        <span className="badge badge-gold">
-          🪙 {user?.gold?.toLocaleString()}
-        </span>
-
-      </div>
 
       {/* TITLE */}
       <div
@@ -35,7 +20,7 @@ export default function HomeHeader() {
           fontFamily:
             "'Creepster', cursive",
 
-          fontSize: 52,
+          fontSize: 50,
 
           letterSpacing: 4,
 
@@ -61,7 +46,7 @@ export default function HomeHeader() {
         style={{
           color: "var(--text3)",
           fontSize: 12,
-          marginTop: 8,
+          marginTop: 6,
           letterSpacing: 2,
           textTransform: "uppercase"
         }}
