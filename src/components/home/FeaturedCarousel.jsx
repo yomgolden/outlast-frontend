@@ -310,28 +310,96 @@ export default function FeaturedCarousel({
 
           </div>
 
+         {/* ACTIVE LOBBY */}
+{
+  currentEvent.bestLobby && (
+
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+
+        marginBottom: 16,
+
+        padding: "10px 14px",
+
+        borderRadius: 14,
+
+        background:
+          "rgba(255,255,255,0.06)",
+
+        border:
+          "1px solid rgba(255,255,255,0.08)"
+      }}
+    >
+
+      <div>
+
+        <div
+          style={{
+            fontSize: 12,
+            opacity: 0.65,
+            marginBottom: 2
+          }}
+        >
+          ACTIVE LOBBY
+        </div>
+
+        <div
+          style={{
+            fontWeight: 700,
+            fontSize: 15
+          }}
+        >
+          👥 {currentEvent.bestLobby.playerCount}/{currentEvent.bestLobby.maxPlayers}
+        </div>
+
+      </div>
+
+      <div
+        style={{
+          fontSize: 13,
+          color: "#facc15",
+          fontWeight: 700
+        }}
+      >
+        {currentEvent.bestLobby.countdown}s
+      </div>
+
+    </div>
+  )
+}
+          
           {/* BUTTON */}
           <button
-            className="btn-primary"
-            onClick={() =>
-              handlePlay(currentEvent.id)
-            }
-            disabled={!!joining}
-            style={{
-              fontSize: 15,
-              padding: "14px 18px"
-            }}
-          >
+  className="btn-primary"
 
-            {
-              joining === currentEvent.id
+  onClick={() =>
+    handlePlay(currentEvent.id)
+  }
 
-                ? "ENTERING..."
+  disabled={!!joining}
 
-                : "⚡ START EVENT"
-            }
+  style={{
+    fontSize: 15,
+    padding: "14px 18px"
+  }}
+>
 
-          </button>
+  {
+    joining === currentEvent.id
+
+      ? "ENTERING..."
+
+      : currentEvent.bestLobby
+
+      ? "⚡ JOIN EVENT"
+
+      : "⚡ START EVENT"
+  }
+
+</button>
 
         </div>
 
