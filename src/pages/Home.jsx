@@ -34,21 +34,51 @@ export default function Home() {
     const load =
       async () => {
 
-        const [
-          events,
-          board
-        ] = await Promise.all([
+        /*
+        =========================
+        FEATURED EVENTS
+        =========================
+        */
 
-          getFeaturedEvents(),
+        try {
 
-          getWeeklyLeaderboard()
-        ]);
+          const events =
+            await getFeaturedEvents();
 
-        setFeatured(events);
+          setFeatured(
+            events || []
+          );
 
-        setLeaderboard(
-          board.slice(0, 5)
-        );
+        } catch (err) {
+
+          console.error(
+            "EVENT ERROR:",
+            err
+          );
+        }
+
+        /*
+        =========================
+        WEEKLY LEADERBOARD
+        =========================
+        */
+
+        try {
+
+          const board =
+            await getWeeklyLeaderboard();
+
+          setLeaderboard(
+            (board || []).slice(0, 5)
+          );
+
+        } catch (err) {
+
+          console.error(
+            "LEADERBOARD ERROR:",
+            err
+          );
+        }
       };
 
     load();
