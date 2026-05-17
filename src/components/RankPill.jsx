@@ -61,19 +61,19 @@ export default function RankPill({
 
         padding:
           small
-            ? "6px 12px"
+            ? "4px 9px"
             : "8px 16px",
 
         borderRadius: 999,
 
         fontSize:
           small
-            ? 11
+            ? 9
             : 13,
 
         fontWeight: 800,
 
-        letterSpacing: 1,
+        letterSpacing: 0.6,
 
         textTransform: "uppercase",
 
