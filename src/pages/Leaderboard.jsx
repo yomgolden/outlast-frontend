@@ -15,6 +15,11 @@ export default function Leaderboard() {
     setLeaderboard
   ] = useState([]);
 
+  const [
+    tab,
+    setTab
+  ] = useState("weekly");
+
   /*
   =====================================
   LOAD LEADERBOARD
@@ -28,8 +33,20 @@ export default function Leaderboard() {
 
         try {
 
-          const data =
-            await getLeaderboard();
+          let data = [];
+
+          if (
+            tab === "weekly"
+          ) {
+
+            data =
+              await getWeeklyLeaderboard();
+
+          } else {
+
+            data =
+              await getSeasonalLeaderboard();
+          }
 
           setLeaderboard(
             data
@@ -45,7 +62,7 @@ export default function Leaderboard() {
 
     load();
 
-  }, []);
+  }, [tab]);
 
   return (
 
@@ -54,6 +71,36 @@ export default function Leaderboard() {
       <h1 className="title">
         LEADERBOARD
       </h1>
+
+      {/* TABS */}
+
+      <div
+        style={{
+          display: "flex",
+          gap: 12,
+          marginBottom: 20
+        }}
+      >
+
+        <button
+          onClick={() =>
+            setTab("weekly")
+          }
+        >
+          Weekly
+        </button>
+
+        <button
+          onClick={() =>
+            setTab("seasonal")
+          }
+        >
+          Seasonal
+        </button>
+
+      </div>
+
+      {/* PLAYERS */}
 
       {
         leaderboard.map(
@@ -73,27 +120,32 @@ export default function Leaderboard() {
               </h3>
 
               <p>
-                Survivor:
-                {" "}
                 @{player.username}
               </p>
 
               <p>
-                Wins:
+                Rank:
                 {" "}
-                {player.wins}
+                {player.rank}
               </p>
 
               <p>
-                Level:
-                {" "}
-                {player.level}
-              </p>
 
-              <p>
-                XP:
+                {
+                  tab === "weekly"
+                    ? "Weekly RP"
+                    : "Season RP"
+                }
+
+                :
                 {" "}
-                {player.xp}
+
+                {
+                  tab === "weekly"
+                    ? player.weeklyRp
+                    : player.seasonRp
+                }
+
               </p>
 
             </div>
