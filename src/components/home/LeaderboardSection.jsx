@@ -336,13 +336,16 @@ export default function LeaderboardSection({
             return (
 
               <div
-                key={i}
-                className={`home-lb-row ${topClass}`}
-              >
 
-                <div className="home-lb-left">
+  key={i}
 
-                  <div className="home-lb-rank">
+  className={`home-lb-row ${topClass}`}
+
+>
+
+  <div className="home-lb-left">
+
+    <div className="home-lb-rank">
 
                     {
                       i === 0
