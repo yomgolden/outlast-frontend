@@ -56,7 +56,7 @@ export default function LeaderboardSection({
 
           flex-direction: column;
 
-          gap: 12px;
+          gap: 10px;
         }
 
         .home-lb-row {
@@ -71,7 +71,7 @@ export default function LeaderboardSection({
 
           justify-content: space-between;
 
-          padding: 14px 16px;
+          padding: 9px 14px;
 
           border-radius: 18px;
 
@@ -206,9 +206,9 @@ export default function LeaderboardSection({
 
         .home-lb-avatar {
 
-          width: 48px;
+          width: 38px;
 
-          height: 48px;
+          height: 38px;
 
           border-radius: 50%;
 
@@ -220,7 +220,7 @@ export default function LeaderboardSection({
 
           font-weight: 700;
 
-          font-size: 18px;
+          font-size: 15px;
 
           color: white;
 
@@ -270,7 +270,7 @@ export default function LeaderboardSection({
 
         .home-lb-name {
 
-          font-size: 18px;
+          font-size: 15px;
 
           font-weight: 700;
 
@@ -296,7 +296,7 @@ export default function LeaderboardSection({
 
         .home-lb-rp-value {
 
-          font-size: 20px;
+          font-size: 16px;
 
           font-weight: 800;
 
@@ -412,6 +412,7 @@ export default function LeaderboardSection({
                     <div className="home-lb-name">
 
                       @{
+                        player.firstname ||
                         player.username ||
                         "Survivor"
                       }
