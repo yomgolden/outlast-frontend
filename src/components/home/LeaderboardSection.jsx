@@ -77,16 +77,8 @@ export default function LeaderboardSection({
 
           backdrop-filter: blur(10px);
 
-          transition:
-            transform 0.2s ease,
-            border 0.2s ease;
-
-          border: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .home-lb-row:active {
-
-          transform: scale(0.985);
+          border:
+            1px solid rgba(255,255,255,0.05);
         }
 
         /*
@@ -180,14 +172,14 @@ export default function LeaderboardSection({
 
           align-items: center;
 
-          gap: 12px;
+          gap: 10px;
 
           min-width: 0;
         }
 
         .home-lb-rank {
 
-          width: 36px;
+          width: 32px;
 
           display: flex;
 
@@ -195,7 +187,7 @@ export default function LeaderboardSection({
 
           justify-content: center;
 
-          font-size: 24px;
+          font-size: 22px;
 
           font-weight: 800;
 
@@ -226,7 +218,8 @@ export default function LeaderboardSection({
 
           flex-shrink: 0;
 
-          border: 2px solid rgba(255,255,255,0.08);
+          border:
+            2px solid rgba(255,255,255,0.08);
 
           background:
             linear-gradient(
@@ -289,7 +282,7 @@ export default function LeaderboardSection({
 
           align-items: center;
 
-          gap: 10px;
+          gap: 8px;
 
           flex-shrink: 0;
         }
@@ -305,7 +298,7 @@ export default function LeaderboardSection({
           letter-spacing: 0.5px;
         }
 
-      </style>
+      `}</style>
 
       <div className="home-lb-title">
         ⚔ TOP SURVIVORS
@@ -336,16 +329,13 @@ export default function LeaderboardSection({
             return (
 
               <div
+                key={i}
+                className={`home-lb-row ${topClass}`}
+              >
 
-  key={i}
+                <div className="home-lb-left">
 
-  className={`home-lb-row ${topClass}`}
-
->
-
-  <div className="home-lb-left">
-
-    <div className="home-lb-rank">
+                  <div className="home-lb-rank">
 
                     {
                       i === 0
@@ -365,6 +355,7 @@ export default function LeaderboardSection({
 
                     {
                       (
+                        player.firstName ||
                         player.username ||
                         "S"
                       )[0].toUpperCase()
@@ -376,8 +367,8 @@ export default function LeaderboardSection({
 
                     <div className="home-lb-name">
 
-                      @{
-                        player.firstname ||
+                      {
+                        player.firstName ||
                         player.username ||
                         "Survivor"
                       }
@@ -411,7 +402,7 @@ export default function LeaderboardSection({
         )}
 
       </div>
-    
-   </div>
+
+    </div>
   );
 }
