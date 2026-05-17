@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router-dom";
 import RankPill from "../RankPill";
 
 const getRankFromRp = (rp) => {
@@ -16,9 +15,6 @@ const getRankFromRp = (rp) => {
 export default function LeaderboardSection({
   leaderboard = []
 }) {
-
-  const navigate =
-    useNavigate();
 
   if (
     leaderboard.length === 0
@@ -380,9 +376,6 @@ export default function LeaderboardSection({
               <div
                 key={i}
                 className={`home-lb-row ${topClass}`}
-                onClick={() =>
-                  navigate("/leaderboard")
-                }
               >
 
                 <div className="home-lb-left">
