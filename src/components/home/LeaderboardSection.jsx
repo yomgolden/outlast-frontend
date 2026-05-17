@@ -39,13 +39,13 @@ export default function LeaderboardSection({
             "Bebas Neue",
             sans-serif;
 
-          font-size: 28px;
+          font-size: 20px;
 
           letter-spacing: 2px;
 
           color: #f8fafc;
 
-          margin-bottom: 16px;
+          margin-bottom: 12px;
 
           text-transform: uppercase;
         }
@@ -56,7 +56,7 @@ export default function LeaderboardSection({
 
           flex-direction: column;
 
-          gap: 10px;
+          gap: 7px;
         }
 
         .home-lb-row {
@@ -71,9 +71,9 @@ export default function LeaderboardSection({
 
           justify-content: space-between;
 
-          padding: 9px 14px;
+          padding: 7px 12px;
 
-          border-radius: 18px;
+          border-radius: 17px;
 
           backdrop-filter: blur(10px);
 
@@ -179,7 +179,7 @@ export default function LeaderboardSection({
 
         .home-lb-rank {
 
-          width: 32px;
+          width: 28px;
 
           display: flex;
 
@@ -187,7 +187,7 @@ export default function LeaderboardSection({
 
           justify-content: center;
 
-          font-size: 22px;
+          font-size: 18px;
 
           font-weight: 800;
 
@@ -198,9 +198,9 @@ export default function LeaderboardSection({
 
         .home-lb-avatar {
 
-          width: 38px;
+          width: 34px;
 
-          height: 38px;
+          height: 34px;
 
           border-radius: 50%;
 
@@ -212,7 +212,7 @@ export default function LeaderboardSection({
 
           font-weight: 700;
 
-          font-size: 15px;
+          font-size: 13px;
 
           color: white;
 
