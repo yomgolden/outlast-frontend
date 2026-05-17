@@ -31,59 +31,71 @@ export default function Home() {
 
   useEffect(() => {
 
-    const load =
-      async () => {
+  const loadHome =
+    async () => {
 
-        /*
-        =========================
-        FEATURED EVENTS
-        =========================
-        */
+      /*
+      =========================
+      FEATURED EVENTS
+      =========================
+      */
 
-        try {
+      try {
 
-          const events =
-            await getFeaturedEvents();
+        const events =
+          await getFeaturedEvents();
 
-          setFeatured(
-            events || []
-          );
+        setFeatured(
+          events || []
+        );
 
-        } catch (err) {
+      } catch (err) {
 
-          console.error(
-            "EVENT ERROR:",
-            err
-          );
-        }
+        console.error(
+          "EVENT ERROR:",
+          err
+        );
+      }
 
-        /*
-        =========================
-        WEEKLY LEADERBOARD
-        =========================
-        */
+      /*
+      =========================
+      LEADERBOARD
+      =========================
+      */
 
-        try {
+      try {
 
-          const board =
-            await getWeeklyLeaderboard();
+        const board =
+          await getWeeklyLeaderboard();
 
-          setLeaderboard(
-            (board || []).slice(0, 5)
-          );
+        setLeaderboard(
+          board.slice(0, 5)
+        );
 
-        } catch (err) {
+      } catch (err) {
 
-          console.error(
-            "LEADERBOARD ERROR:",
-            err
-          );
-        }
-      };
+        console.error(
+          "LEADERBOARD ERROR:",
+          err
+        );
+      }
+    };
 
-    load();
+  // INITIAL LOAD
+  loadHome();
 
-  }, []);
+  // LIVE REFRESH
+  const interval =
+    setInterval(() => {
+
+      loadHome();
+
+    }, 5000);
+
+  return () =>
+    clearInterval(interval);
+
+}, []);
 
   if (loading)
     return <Loader />;
