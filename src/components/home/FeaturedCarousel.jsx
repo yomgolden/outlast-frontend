@@ -203,13 +203,13 @@ export default function FeaturedCarousel({
 
           borderRadius: 24,
 
-          padding: 22,
+          padding: 18,
 
           position: "relative",
 
           overflow: "hidden",
 
-          minHeight: 250,
+          minHeight: 205,
 
           transition:
             "all 0.4s ease"
@@ -225,8 +225,8 @@ export default function FeaturedCarousel({
             transform:
               "translateY(-50%)",
 
-            width: 180,
-            height: 180,
+            width: 140,
+            height: 140,
 
             borderRadius: "50%",
 
@@ -272,7 +272,7 @@ export default function FeaturedCarousel({
               fontFamily:
                 "Bebas Neue, sans-serif",
 
-              fontSize: 42,
+              fontSize: 36,
 
               letterSpacing: 2,
 
@@ -300,7 +300,7 @@ export default function FeaturedCarousel({
 
               lineHeight: 1.6,
 
-              marginBottom: 26,
+              marginBottom: 20,
 
               maxWidth: "90%"
             }}
@@ -319,7 +319,7 @@ export default function FeaturedCarousel({
             disabled={!!joining}
             style={{
               fontSize: 15,
-              padding: "16px 18px"
+              padding: "14px 18px"
             }}
           >
 
