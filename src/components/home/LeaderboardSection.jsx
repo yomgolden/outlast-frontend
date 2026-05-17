@@ -301,7 +301,7 @@ export default function LeaderboardSection({
       `}</style>
 
       <div className="home-lb-title">
-        ⚔ TOP SURVIVORS
+       TOP SURVIVORS
       </div>
 
       <div className="home-lb-list">
