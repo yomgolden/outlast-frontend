@@ -4,7 +4,8 @@ import {
 } from "react";
 
 import {
-  getLeaderboard
+  getWeeklyLeaderboard,
+  getSeasonalLeaderboard
 } from "../api/api";
 
 export default function Leaderboard() {
