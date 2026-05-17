@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 import {
   getFeaturedEvents,
-  getLeaderboard
+  getWeeklyLeaderboard()
 } from "../api/api";
 
 import { useUser } from "../context/UserContext";
