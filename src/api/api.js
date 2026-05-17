@@ -161,12 +161,23 @@ LEADERBOARD
 =====================================
 */
 
-export const getLeaderboard =
+export const getWeeklyLeaderboard =
   async () => {
 
     const res =
       await api.get(
-        "/leaderboard"
+        "/leaderboard/weekly"
+      );
+
+    return res.data;
+  };
+
+export const getSeasonalLeaderboard =
+  async () => {
+
+    const res =
+      await api.get(
+        "/leaderboard/seasonal"
       );
 
     return res.data;
