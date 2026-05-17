@@ -305,45 +305,7 @@ export default function LeaderboardSection({
           letter-spacing: 0.5px;
         }
 
-        .home-lb-button {
-
-          width: 100%;
-
-          margin-top: 16px;
-
-          border: none;
-
-          border-radius: 18px;
-
-          padding: 16px;
-
-          font-size: 16px;
-
-          font-weight: 700;
-
-          letter-spacing: 1px;
-
-          text-transform: uppercase;
-
-          color: #7aa2ff;
-
-          background:
-            linear-gradient(
-              135deg,
-              rgba(25,35,70,0.9),
-              rgba(10,18,35,0.95)
-            );
-
-          border:
-            1px solid rgba(90,130,255,0.18);
-
-          box-shadow:
-            0 0 20px rgba(80,120,255,0.06);
-
-          cursor: pointer;
-        }
-
-      `}</style>
+      </style>
 
       <div className="home-lb-title">
         ⚔ TOP SURVIVORS
@@ -446,18 +408,7 @@ export default function LeaderboardSection({
         )}
 
       </div>
-
-      <button
-        className="home-lb-button"
-        onClick={() =>
-          navigate("/leaderboard")
-        }
-      >
-
-        View Full Leaderboard →
-
-      </button>
-
-    </div>
+    
+   </div>
   );
 }
